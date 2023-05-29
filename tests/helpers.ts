@@ -1,27 +1,21 @@
 import * as jwt from "jsonwebtoken";
 
 import { prisma } from "@/config";
-import authFactory from "./factories/auth-factory";
 import userFactory from "./factories/user-factory";
-import clientFactory from "./factories/clients-factory";
-import addressFactory from "./factories/address-factory";
 
 export async function cleanDb() {
 
-  await prisma.payments.deleteMany({})
-  await prisma.paymentType.deleteMany({})
-  await prisma.ordderItem.deleteMany({})
-  await prisma.ordder.deleteMany({})
-  await prisma.products.deleteMany({})
-  await prisma.address.deleteMany({});
-  await prisma.clients.deleteMany({});
-  await prisma.sessions.deleteMany({});
-  await prisma.users.deleteMany({});
-  
+  await prisma.productImage.deleteMany({})
+  await prisma.productCategory.deleteMany({})
+  await prisma.category.deleteMany({})
+  await prisma.image.deleteMany({})
+  await prisma.session.deleteMany({})
+  await prisma.user.deleteMany({})
+
 }
 
 export async function generateValidToken() {
-
+  /*
   const body = authFactory.generateValidBody()
   const user = await userFactory.createUser(body)
 
@@ -30,22 +24,5 @@ export async function generateValidToken() {
   const session = userFactory.createSession({token, userId:user.id})
 
   return token;
-
-}
-
-export async function generateClientWithAddress(token: string) {
-
-  const clientBody = await clientFactory.createClientBody()
-
-  const newClient = await clientFactory.createClient(clientBody)
-
-  const body = await addressFactory.generateAddressValidBody(newClient.id)
-
-  const newAddress = await addressFactory.createAddress(body)
-
-  return{
-    clientId: newClient.id,
-    addressId: newAddress.id
-  }
-
+  */
 }

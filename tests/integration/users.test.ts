@@ -4,7 +4,6 @@ import { faker } from "@faker-js/faker";
 import dayjs from "dayjs";
 import httpStatus from "http-status";
 import supertest from "supertest";
-import authFactory from "../factories/auth-factory";
 import userFactory from "../factories/user-factory";
 import { cleanDb } from "../helpers";
 

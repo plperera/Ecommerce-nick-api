@@ -20,7 +20,7 @@ export async function authenticateToken(req: AuthenticatedRequest, res: Response
   try {
     const { userId } = jwt.verify(token, process.env.JWT_SECRET) as JWTPayload;
 
-    const session = await prisma.sessions.findFirst({
+    const session = await prisma.session.findFirst({
       where: {
         token,
       },
