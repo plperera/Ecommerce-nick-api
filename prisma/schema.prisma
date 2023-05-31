@@ -18,6 +18,35 @@ model session {
   user        user?     @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
+model enrollment {
+  id          Int       @id @default(autoincrement())
+  userId      Int       @unique
+  cpf         String    @unique
+  birthday    String
+  phone       String
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  user        user?     @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model address {
+  id              Int        @id @default(autoincrement())
+  userId          Int 
+  mainAddress     Boolean    @default(true)
+  cep             String
+  street          String
+  city            String
+  state           String
+  number          String
+  neighborhood    String
+  addressDetail   String?   
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+
+  user        user?     @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
 model user {
   id        Int         @id @default(autoincrement())
   name      String
@@ -26,7 +55,18 @@ model user {
   createdAt DateTime    @default(now())
   updatedAt DateTime    @updatedAt
 
-  session   session[]
+  session       session[]
+  enrollment    enrollment[]
+  address       address[]
+}
+
+model userAdmin {
+  id        Int         @id @default(autoincrement())
+  name      String
+  email     String      @unique
+  password  String
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
 }
 
 model product {

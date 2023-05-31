@@ -2,11 +2,12 @@ import authRepository from "@/repositories/auth-repository"
 import httpStatus from "http-status"
 import bcrypt from 'bcrypt'
 import jwt from "jsonwebtoken";
-import { signUpBody } from "@/schemas/signupSCHEMA"
+import { signUpBody } from "@/schemas/auth/signupSCHEMA"
 import { unauthorizedError } from "@/errors/unauthorized-error"
 import { badRequestError } from "@/errors/bad-request-erros";
 import { conflictError } from "@/errors/conflict-error";
-import { signInBody } from "@/schemas/signInSCHEMA";
+import { notFoundError } from "@/errors/not-found-error";
+import { signInBody } from "@/schemas/auth/signInSCHEMA";
 
 async function verifyUser(body: signUpBody){
 
@@ -59,13 +60,27 @@ async function createSession(userId: number){
     return session.token
  
 }
+async function deleteSession(token: string){
+
+    const hasSession = await authRepository.findSession( token )
+    
+    if (!hasSession) {
+        throw notFoundError("Session não encontrada")
+    }
+
+    await authRepository.deleteSession( token )
+    
+    return 
+ 
+}
 
 
 const authService = {
     verifyUser,
     createNewUser,
     verifyAccees,
-    createSession
+    createSession,
+    deleteSession
 }
 
 export default authService
