@@ -4,7 +4,6 @@ import { AuthenticatedRequest } from "@/middlewares/authentication-middlerare";
 import enrollmentService from "@/services/enrollment-service";
 import { enrollmentSCHEMA } from "@/schemas/enrollment/createEnrollmentSCHEMA";
 
-
 export async function getEnrollment(req: AuthenticatedRequest, res: Response){
     try {        
         const { userId } = req
