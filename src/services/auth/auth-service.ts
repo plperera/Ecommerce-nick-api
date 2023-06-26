@@ -1,4 +1,4 @@
-import authRepository from "@/repositories/auth-repository"
+import authRepository from "@/repositories/auth/auth-repository"
 import httpStatus from "http-status"
 import bcrypt from 'bcrypt'
 import jwt from "jsonwebtoken";
@@ -60,15 +60,9 @@ async function createSession(userId: number){
     return session.token
  
 }
-async function deleteSession(token: string){
+async function deleteSession(userId: number){
 
-    const hasSession = await authRepository.findSession( token )
-    
-    if (!hasSession) {
-        throw notFoundError("Session não encontrada")
-    }
-
-    await authRepository.deleteSession( token )
+    await authRepository.deleteSession( userId )
     
     return 
  

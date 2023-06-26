@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import httpStatus from "http-status";
-import { AuthenticatedRequest } from "@/middlewares/authentication-middlerare";
+import { AuthenticatedRequest } from "@/middlewares/auth/authentication-middlerare";
 import enrollmentService from "@/services/enrollment-service";
 import { enrollmentSCHEMA } from "@/schemas/enrollment/createEnrollmentSCHEMA";
 

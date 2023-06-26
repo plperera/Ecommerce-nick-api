@@ -4,7 +4,7 @@ import * as jwt from "jsonwebtoken";
 
 import { prisma } from "@/config";
 
-export async function authenticateToken(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+export async function authenticateAdminToken(req: AuthenticatedAdminRequest, res: Response, next: NextFunction) {
   const authHeader = req.header("Authorization");
 
   if (!authHeader){
@@ -18,7 +18,7 @@ export async function authenticateToken(req: AuthenticatedRequest, res: Response
   }
 
   try {
-    const { userId } = jwt.verify(token, process.env.JWT_SECRET) as JWTPayload;
+    const { userAdminId } = jwt.verify(token, process.env.JWT_SECRET) as RequestWithUserAdmin;
 
     const session = await prisma.session.findFirst({
       where: {
@@ -30,7 +30,7 @@ export async function authenticateToken(req: AuthenticatedRequest, res: Response
       return res.sendStatus(httpStatus.UNAUTHORIZED);
     }
 
-    req.userId = userId;
+    req.userAdminId = userAdminId;
 
     return next();
 
@@ -39,8 +39,8 @@ export async function authenticateToken(req: AuthenticatedRequest, res: Response
   }
 }
 
-export type AuthenticatedRequest = Request & JWTPayload;
+export type AuthenticatedAdminRequest = Request & RequestWithUserAdmin;
 
-type JWTPayload = {
-  userId: number;
+type RequestWithUserAdmin = {
+  userAdminId: number;
 };

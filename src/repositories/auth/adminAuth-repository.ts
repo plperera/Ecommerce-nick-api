@@ -2,14 +2,14 @@ import { prisma } from "@/config";
 import { signUpBody } from "@/schemas/auth/signupSCHEMA";
 
 async function findUserWithEmail(email: string){
-    return prisma.user.findFirst({
+    return prisma.userAdmin.findFirst({
         where: {
             email: email
         }
     })
 }
 async function createUser(body: Omit<signUpBody, "passwordVerify">){
-    return prisma.user.create({
+    return prisma.userAdmin.create({
         data: {
             email: body.email,
             name: body.name,
@@ -17,29 +17,29 @@ async function createUser(body: Omit<signUpBody, "passwordVerify">){
         }
     })
 }
-async function createSession({userId, token}: {userId: number, token: string}){
-    return prisma.session.create({
+async function createSession({userAdminId, token}: {userAdminId: number, token: string}){
+    return prisma.sessionAdmin.create({
         data: {
-            userId: userId,
+            userAdminId: userAdminId,
             token: token
         }
     })
 }
 async function findSession(token: string){
-    return prisma.session.findFirst({
+    return prisma.sessionAdmin.findFirst({
         where: {
             token: token
         }
     })
 }
-async function deleteSession(token: string){
-    return prisma.session.delete({
+async function deleteSession(userAdminId: number){
+    return prisma.sessionAdmin.deleteMany({
         where: {
-            token: token
+            userAdminId: userAdminId
         }
     })
 }
-const authRepository = {
+const authAdminRepository = {
     findUserWithEmail,
     createUser,
     createSession,
@@ -47,4 +47,4 @@ const authRepository = {
     deleteSession
 }
 
-export default authRepository
+export default authAdminRepository

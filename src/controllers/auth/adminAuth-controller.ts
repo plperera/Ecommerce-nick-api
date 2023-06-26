@@ -1,17 +1,12 @@
-import authService from "@/services/auth-service";
-
 import { Request, Response } from "express";
 import httpStatus from "http-status";
-import bcrypt from 'bcrypt';
 import { signupSCHEMA } from "@/schemas/auth/signupSCHEMA";
 import { signInSCHEMA } from "@/schemas/auth/signInSCHEMA";
-import { authTokenSCHEMA } from "@/schemas/auth/authTokenSCHEMA";
+import authAdminService from "@/services/auth/adminAuth-service";
+import { AuthenticatedAdminRequest } from "@/middlewares/auth/authenticationAdmin-middlerare";
 
-
-export async function signUp(req: Request, res: Response){
-
+export async function adminSignUp(req: Request, res: Response){
     try {
-
         const isValid = signupSCHEMA.validate(req.body, {abortEarly: false})
 
         if(isValid.error){
@@ -20,12 +15,12 @@ export async function signUp(req: Request, res: Response){
         
         const { email, name, password, passwordVerify } = req.body
 
-        await authService.verifyUser({ email, name, password, passwordVerify })
-        await authService.createNewUser({ email, name, password })
+        await authAdminService.verifyUser({ email, name, password, passwordVerify })
 
-        return res.sendStatus(httpStatus.CREATED)
+        await authAdminService.createNewUser({ email, name, password })
+
+        return res.sendStatus(httpStatus.CREATED)  
         
-
     } catch (error) {
         if(error.name === "ConflictError") {
             return res.sendStatus(httpStatus.CONFLICT);
@@ -39,7 +34,7 @@ export async function signUp(req: Request, res: Response){
         return res.sendStatus(httpStatus.INTERNAL_SERVER_ERROR);
     }
 }
-export async function signIn(req: Request, res: Response) {
+export async function adminSignIn(req: Request, res: Response) {
     try {
 
         const isValid = signInSCHEMA.validate(req.body, {abortEarly: false})
@@ -50,9 +45,9 @@ export async function signIn(req: Request, res: Response) {
         
         const { email, password } = req.body
         
-        const { userId } = await authService.verifyAccees({ email, password })
+        const { userAdminId } = await authAdminService.verifyAccees({ email, password })
         
-        const token = await authService.createSession( userId )
+        const token = await authAdminService.createSession( userAdminId )
 
         return res.send({token: token}).status(httpStatus.OK)
         
@@ -72,21 +67,15 @@ export async function signIn(req: Request, res: Response) {
             return res.sendStatus(httpStatus.FORBIDDEN);
         }
           
-        return res.sendStatus(httpStatus.BAD_REQUEST);
+        return res.sendStatus(httpStatus.INTERNAL_SERVER_ERROR);
     }
 }
-export async function logout(req: Request, res: Response) {
+export async function adminLogout(req: AuthenticatedAdminRequest, res: Response) {
     try {
-
-        const isValid = authTokenSCHEMA.validate(req.body, {abortEarly: false})
-
-        if(isValid.error){
-            return res.sendStatus(httpStatus.BAD_REQUEST)
-        }
         
-        const { token } = req.body
+        const { userAdminId } = req
         
-        await authService.deleteSession( token )
+        await authAdminService.deleteSession(userAdminId)
 
         return res.sendStatus(httpStatus.OK)
         
@@ -109,4 +98,3 @@ export async function logout(req: Request, res: Response) {
         return res.sendStatus(httpStatus.BAD_REQUEST);
     }
 }
-

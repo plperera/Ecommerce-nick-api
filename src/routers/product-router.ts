@@ -1,4 +1,4 @@
-import { authenticateToken } from '@/middlewares/authentication-middlerare'
+import { authenticateToken } from '@/middlewares/auth/authentication-middlerare'
 import { Router } from 'express'
 
 const productRouter = Router()
