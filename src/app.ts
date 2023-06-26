@@ -8,6 +8,7 @@ import { enrollmentRouter } from "./routers/enrollment-router";
 import { addressRouter } from "./routers/address-router";
 import { authRouter } from "./routers/auth/auth-router";
 import { adminAuthRouter } from "./routers/auth/adminAuth-router";
+import { shippingRouter } from "./routers/shipping-router";
 
 loadEnv();
 
@@ -21,6 +22,7 @@ app
   .use("/admin", adminAuthRouter)
   .use("/enrollment", enrollmentRouter)
   .use("/address", addressRouter)
+  .use("/shipping", shippingRouter)
 
 export function init(): Promise<Express> {
   connectDb();
