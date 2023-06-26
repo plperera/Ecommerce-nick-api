@@ -18,7 +18,7 @@ app
   .use(express.json())
   .get("/health", (_req, res) => res.send("OK!"))
   .use("/auth", authRouter)
-  .use("/auth/admin", adminAuthRouter)
+  .use("/admin", adminAuthRouter)
   .use("/enrollment", enrollmentRouter)
   .use("/address", addressRouter)
 

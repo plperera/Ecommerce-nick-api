@@ -46,7 +46,7 @@ async function verifyAccees(body: signInBody){
     const isValidPassword = bcrypt.compareSync(body.password, hasUser.password)
 
     if(!isValidPassword){
-        throw unauthorizedError("Senha invalida")
+        throw badRequestError("Senha invalida")
     }
 
     return { userAdminId: hasUser.id }
@@ -62,6 +62,10 @@ async function createSession(userAdminId: number){
  
 }
 async function deleteSession(userAdminId: number){
+
+    if (!userAdminId){
+        throw badRequestError("adminUserId inválido")
+    }
 
     await authAdminRepository.deleteSession(userAdminId)
     return 

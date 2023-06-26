@@ -10,19 +10,19 @@ export async function authenticateAdminToken(req: AuthenticatedAdminRequest, res
   if (!authHeader){
     return res.sendStatus(httpStatus.UNAUTHORIZED)
   }
-
+  
   const token = authHeader.split(" ")[1];
 
   if (!token){
     return res.sendStatus(httpStatus.UNAUTHORIZED);
   }
-
+  
   try {
-    const { userAdminId } = jwt.verify(token, process.env.JWT_SECRET) as RequestWithUserAdmin;
+    //const { userAdminId } = jwt.verify(token, process.env.JWT_SECRET) as RequestWithUserAdmin;
 
-    const session = await prisma.session.findFirst({
+    const session = await prisma.sessionAdmin.findUnique({
       where: {
-        token,
+        token: token,
       },
     });
 
@@ -30,7 +30,7 @@ export async function authenticateAdminToken(req: AuthenticatedAdminRequest, res
       return res.sendStatus(httpStatus.UNAUTHORIZED);
     }
 
-    req.userAdminId = userAdminId;
+    req.userAdminId = session.userAdminId;
 
     return next();
 

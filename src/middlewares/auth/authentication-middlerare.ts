@@ -18,8 +18,7 @@ export async function authenticateToken(req: AuthenticatedRequest, res: Response
   }
 
   try {
-    const { userId } = jwt.verify(token, process.env.JWT_SECRET) as RequestWithUser;
-
+    //const { userId } = jwt.verify(token, process.env.JWT_SECRET) as RequestWithUser;
     const session = await prisma.session.findFirst({
       where: {
         token,
@@ -30,7 +29,7 @@ export async function authenticateToken(req: AuthenticatedRequest, res: Response
       return res.sendStatus(httpStatus.UNAUTHORIZED);
     }
 
-    req.userId = userId;
+    req.userId = session.userId;
 
     return next();
 
