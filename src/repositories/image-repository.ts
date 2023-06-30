@@ -1,6 +1,4 @@
 import { prisma } from "@/config";
-import { newCategoryBody } from "@/schemas/category/newCategorySCHEMA";
-import { putCategoryBody } from "@/schemas/category/putCategorySCHEMA";
 
 async function findAll(){
     return prisma.image.findMany({
@@ -10,9 +8,17 @@ async function findAll(){
         }
     });
 }
+async function createImageRef( imageURL: string ){
+    return prisma.image.create({
+       data: {
+        imageUrl: imageURL
+       }
+    });
+}
 
 const imageRepository = {
     findAll,
+    createImageRef
 }
 
 export default imageRepository

@@ -2,6 +2,7 @@ import { Response } from "express";
 import httpStatus from "http-status";
 import bucket from "@/config/firebaseconfig";
 import { AuthenticatedAdminRequest } from "@/middlewares/auth/authenticationAdmin-middlerare";
+import { AuthenticatedAdminRequestWithPublicURL } from "@/middlewares/image/uploadImage-middleware";
 
 export function SaveImage(req: AuthenticatedAdminRequestWithPublicURL, res: Response){
     try {       
@@ -46,9 +47,3 @@ export function SaveImage(req: AuthenticatedAdminRequestWithPublicURL, res: Resp
         return res.sendStatus(httpStatus.INTERNAL_SERVER_ERROR);
     }
 }
-
-export type AuthenticatedAdminRequestWithPublicURL = AuthenticatedAdminRequest & PublicImageFileFireBaseURL;
-
-type PublicImageFileFireBaseURL = {
-    publicImageFileFireBaseURL: string;
-};

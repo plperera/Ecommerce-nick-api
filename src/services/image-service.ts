@@ -9,9 +9,16 @@ async function getAllImagesData(){
 
     return result
 }
+async function createImageRef( imageURL: string ){
+
+    await imageRepository.createImageRef( imageURL )
+
+    return 
+}
 
 const imageService = {
     getAllImagesData,
+    createImageRef
 }
 
 export default imageService
