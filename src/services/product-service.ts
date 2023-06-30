@@ -6,6 +6,7 @@ import categoryRepository from "@/repositories/category-repository";
 import imageRepository from "@/repositories/image-repository";
 import productRepository, { productBodyResponse, productUniqueBodyResponse } from "@/repositories/product-repository";
 import { createProductBody, imagesArray } from "@/schemas/product/createProductSCHEMA";
+import { putProductBody } from "@/schemas/product/putProductSCHEMA";
 
 function FormatProducts(productsArray: productBodyResponse){
 
@@ -84,7 +85,7 @@ async function getUniqueProductDataById( productId: number ) {
     return formattedProduct
     
 }
-async function verifyBody( body: createProductBody ) {
+async function verifyCategoryAndImageArrays( body: createProductBody ) {
 
     const { categories, images } = body
     
@@ -102,14 +103,27 @@ async function verifyBody( body: createProductBody ) {
         }
     })
 
-    const hasName = await productRepository.findByName(body.name)
+    return
+
+}
+async function verifyName( name: string ) {
+
+    const hasName = await productRepository.findByName(name)
 
     if( hasName ){
         throw conflictError("Nome ja cadastrado")
     }
 
-    return
+}
+async function verifyNameBelongsId ({ name, id }: { name: string, id: number}){
 
+    const result = await productRepository.findByName(name)
+
+    if ( result && result?.id !== id){
+        throw conflictError("Nome de método de entrega já atrelado a outro id")
+    }
+
+    return 
 }
 async function createProduct( body: createProductBody ) {
 
@@ -138,12 +152,45 @@ async function createProduct( body: createProductBody ) {
     await productRepository.createManyImagesProduct(newImagesArray)
 
 }
+async function putProduct( body: putProductBody ) {
+
+    const image = justOneTrue(body.images)
+
+    const newCategoryArray = body.categories.map(e => ({
+        categoryId: e.categoryId,
+        productId: body.id
+    }));
+
+    const newImagesArray = image.map(e => ({
+        imageId: e.imageId,
+        mainImage: e.mainImage,
+        productId: body.id
+    }));
+
+    await productRepository.deleteManyCategoriesProduct(body.id)
+    await productRepository.deleteManyImagesProduct(body.id)
+
+    await productRepository.createManyCategoriesProduct(newCategoryArray)
+    await productRepository.createManyImagesProduct(newImagesArray)
+
+    await productRepository.putProduct({ 
+        id: body.id,
+        name: body.name, 
+        description: body.description, 
+        price: body.price,
+        stock: body.stock,
+        salesNumber: body.salesNumber
+    })
+}
 const productService = {
     getAllProductsData,
     getAllProductsDataByCategoryId,
     getUniqueProductDataById,
-    verifyBody,
-    createProduct
+    verifyCategoryAndImageArrays,
+    verifyName,
+    verifyNameBelongsId,
+    createProduct,
+    putProduct
 }
 
 export default productService

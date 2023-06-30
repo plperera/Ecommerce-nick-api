@@ -2,6 +2,7 @@ import { prisma } from "@/config";
 import { newCategoryBody } from "@/schemas/category/newCategorySCHEMA";
 import { putCategoryBody } from "@/schemas/category/putCategorySCHEMA";
 import { categoriesArray, productBody } from "@/schemas/product/createProductSCHEMA";
+import { putProductBody } from "@/schemas/product/putProductSCHEMA";
 
 export type productBodyResponse = {
     id: number;
@@ -184,6 +185,34 @@ async function createManyImagesProduct(body: ImagesProductBody){
         data: body
     });
 }
+async function deleteManyCategoriesProduct(productId: number){
+    return prisma.productCategory.deleteMany({
+        where: {
+            productId: productId
+        }
+    });
+}
+async function deleteManyImagesProduct(productId: number){
+    return prisma.productImage.deleteMany({
+        where: {
+            productId: productId
+        }
+    });
+}
+async function putProduct(body: Omit<putProductBody, "categories" | "images">){
+    return prisma.product.update({
+        where:{
+            id: body.id
+        },
+        data: {
+            name: body.name,
+            description: body.description,
+            price: body.price,
+            stock: body.stock,
+            salesAmount: body.salesNumber
+        }
+    });
+}
 
 const productRepository = {
     findAllActive,
@@ -192,7 +221,10 @@ const productRepository = {
     findByName,
     createManyCategoriesProduct,
     createManyImagesProduct,
-    createProduct
+    createProduct,
+    deleteManyCategoriesProduct,
+    deleteManyImagesProduct,
+    putProduct
 }
 
 export default productRepository
