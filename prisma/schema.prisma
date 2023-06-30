@@ -95,7 +95,7 @@ model product {
   description       String      
   price             Int         
   stock             Int         
-  salesAmount       Int         
+  salesAmount       Int         @default(0)
   isActive          Boolean     @default(true)
   createdAt         DateTime    @default(now())
   updatedAt         DateTime    @updatedAt

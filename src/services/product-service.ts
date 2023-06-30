@@ -1,7 +1,11 @@
+import { badRequestError } from "@/errors/bad-request-erros";
 import { conflictError } from "@/errors/conflict-error";
 import { forbiddenError } from "@/errors/forbidden-error";
 import { notFoundError } from "@/errors/not-found-error";
+import categoryRepository from "@/repositories/category-repository";
+import imageRepository from "@/repositories/image-repository";
 import productRepository, { productBodyResponse, productUniqueBodyResponse } from "@/repositories/product-repository";
+import { createProductBody, imagesArray } from "@/schemas/product/createProductSCHEMA";
 
 function FormatProducts(productsArray: productBodyResponse){
 
@@ -22,6 +26,22 @@ function FormatProducts(productsArray: productBodyResponse){
 
     return result
 }
+function justOneTrue(images: { mainImage: boolean, imageId: number }[]) {
+
+    let hasMain = false
+
+    for (let i = 0; i < images.length; i++){
+        if (hasMain){
+            images[i].mainImage = false
+        } else if (images[i].mainImage && !hasMain) {
+            hasMain = true
+        }
+    }
+    if(!hasMain){
+        images[0].mainImage = true
+    }
+    return images
+}
 async function getAllProductsData(){
 
     const result = await productRepository.findAllActive()
@@ -38,85 +58,92 @@ async function getAllProductsDataByCategoryId( categoryId: number ){
 
     return formattedProducts
 }
-async function getUniqueProductDataById( productId: number ): Promise<productUniqueBodyResponse | []> {
+async function getUniqueProductDataById( productId: number ) {
 
     const result = await productRepository.findProductById( productId )
 
-    if (result) {
-        const formattedProduct = {
-            productId: result.id,
-            name: result.name,
-            description: result.description,
-            price: result.price,
-            categories: result.productCategory.map(e => ({
-                categoryId: e.category.id,
-                name: e.category.name
-            })),
-            images: result.productImage.map(e => ({
-                mainImage: e.mainImage,
-                imageUrl: e.image.imageUrl
-            }))
-        }; 
-        //return formattedProduct
+    if (!result) {
+        throw notFoundError("Produto não encontrado") 
     } 
+
+    const formattedProduct = {
+        productId: result.id,
+        name: result.name,
+        description: result.description,
+        price: result.price,
+        categories: result.productCategory.map(e => ({
+            categoryId: e.category.id,
+            name: e.category.name
+        })),
+        images: result.productImage.map(e => ({
+            mainImage: e.mainImage,
+            imageUrl: e.image.imageUrl
+        }))
+    }; 
     
-    return []
-
+    return formattedProduct
+    
 }
-/*
-async function verifyName(name: string){
+async function verifyBody( body: createProductBody ) {
 
-    const result = await categoryRepository.findByName(name)
+    const { categories, images } = body
+    
+    categories.map( async e => {
+        const result = await categoryRepository.findById( e.categoryId )
+        if (!result) {
+            throw badRequestError("Categoria inexistente")
+        }
+    })
 
-    if ( result ){
-        throw conflictError("Nome de categoria já existente")
+    images.map( async e => {
+        const result = await imageRepository.findById( e.imageId )
+        if (!result) {
+            throw badRequestError("Imagem não encontrada")
+        }
+    })
+
+    const hasName = await productRepository.findByName(body.name)
+
+    if( hasName ){
+        throw conflictError("Nome ja cadastrado")
     }
 
-    return 
+    return
+
 }
-async function verifyNameBelongsId ({ name, id }: Omit<putShippingBody, "price">){
+async function createProduct( body: createProductBody ) {
 
-    const result = await categoryRepository.findByName(name)
+    const productData = await productRepository.createProduct({ 
+        name: body.name, 
+        description: body.description, 
+        price: body.price,
+        stock: body.stock
+    })
 
-    if ( result && result?.id !== id){
-        throw conflictError("Nome de categoria já atrelada a outro id")
-    }
+    const image = justOneTrue(body.images)
 
-    return 
+    const newCategoryArray = body.categories.map(e => ({
+        categoryId: e.categoryId,
+        productId: productData.id
+    }));
+
+    const newImagesArray = image.map(e => ({
+        imageId: e.imageId,
+        mainImage: e.mainImage,
+        productId: productData.id
+    }));
+
+    await productRepository.createManyCategoriesProduct(newCategoryArray)
+    
+    await productRepository.createManyImagesProduct(newImagesArray)
+
 }
-async function verifyValidId(id: number){
-
-    const result = await categoryRepository.findById(id)
-
-    if ( !result ){
-        throw notFoundError("Não existe categoria com o ID passado")
-    }
-
-    return 
-}
-async function createCategory({ name }: newCategoryBody){
-
-    await categoryRepository.createCategory({ name })
-
-    return 
-}
-async function putCategory({ name, id }: putCategoryBody){
-
-    await categoryRepository.putCategory({ name, id })
-
-    return 
-}
-async function disableCategory(id: number){
-
-    await categoryRepository.disableCategory( id )
-
-    return 
-}
-*/
 const productService = {
     getAllProductsData,
     getAllProductsDataByCategoryId,
-    getUniqueProductDataById
+    getUniqueProductDataById,
+    verifyBody,
+    createProduct
 }
 
 export default productService

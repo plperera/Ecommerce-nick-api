@@ -1,6 +1,7 @@
 import { prisma } from "@/config";
 import { newCategoryBody } from "@/schemas/category/newCategorySCHEMA";
 import { putCategoryBody } from "@/schemas/category/putCategorySCHEMA";
+import { categoriesArray, productBody } from "@/schemas/product/createProductSCHEMA";
 
 export type productBodyResponse = {
     id: number;
@@ -35,6 +36,16 @@ export type productUniqueBodyResponse = {
       image: File;
     }[];
 };
+type CategoriesProductBody = { 
+    productId: number, 
+    categoryId: number
+}[]
+
+type ImagesProductBody = { 
+    imageId: number, 
+    productId: number,
+    mainImage: boolean
+}[]
 
 async function findAllActive(){
     return prisma.product.findMany({
@@ -147,37 +158,30 @@ async function findProductById(productId: number){
     });
 }
 async function findByName(productName: string){
-    return prisma.product.findFirst({
+    return prisma.product.findUnique({
         where: {
             name: productName
         }
     });
 }
-async function createCategory({ name }: newCategoryBody){
-    return prisma.category.create({
+async function createProduct(body: productBody){
+    return prisma.product.create({
         data: {
-            name: name
+            name: body.name,
+            description: body.description,
+            price: body.price,
+            stock: body.stock
         }
     });
 }
-async function putCategory({ name, id }: putCategoryBody){
-    return prisma.category.update({
-        where: {
-            id: id
-        },
-        data:{
-            name: name
-        }
+async function createManyCategoriesProduct(body: CategoriesProductBody){
+    return prisma.productCategory.createMany({
+        data: body
     });
 }
-async function disableCategory(id : number){
-    return prisma.category.update({
-        where: {
-            id: id
-        },
-        data:{
-            isActive: false
-        }
+async function createManyImagesProduct(body: ImagesProductBody){
+    return prisma.productImage.createMany({
+        data: body
     });
 }
 
@@ -185,7 +189,10 @@ const productRepository = {
     findAllActive,
     findAllProductsActiveByCategoryId,
     findProductById,
-    findByName
+    findByName,
+    createManyCategoriesProduct,
+    createManyImagesProduct,
+    createProduct
 }
 
 export default productRepository

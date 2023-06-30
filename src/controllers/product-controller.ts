@@ -5,6 +5,7 @@ import { AuthenticatedAdminRequest } from "@/middlewares/auth/authenticationAdmi
 import productService from "@/services/product-service";
 import { getProductByCategorySCHEMA } from "@/schemas/product/getProductByCategorySCHEMA";
 import { getUniqueProductSCHEMA } from "@/schemas/product/getUniqueProductSCHEMA";
+import { createProductSCHEMA } from "@/schemas/product/createProductSCHEMA";
 
 export async function getAllProducts(req: AuthenticatedRequest, res: Response){
     try {        
@@ -31,8 +32,8 @@ export async function getAllProductsByCategoryId(req: AuthenticatedRequest, res:
     try {        
 
         const { categoryId } = req.params
-
-        const isValid = getProductByCategorySCHEMA.validate( Number(categoryId), {abortEarly: false})
+        
+        const isValid = getProductByCategorySCHEMA.validate( {categoryId: Number(categoryId)}, {abortEarly: false})
 
         if(isValid.error){
             return res.sendStatus(httpStatus.BAD_REQUEST)
@@ -61,7 +62,7 @@ export async function getUniqueProductsById(req: AuthenticatedRequest, res: Resp
 
         const { productId } = req.params
 
-        const isValid = getUniqueProductSCHEMA.validate( Number(productId), {abortEarly: false})
+        const isValid = getUniqueProductSCHEMA.validate( {productId: Number(productId)}, {abortEarly: false})
 
         if(isValid.error){
             return res.sendStatus(httpStatus.BAD_REQUEST)
@@ -85,21 +86,19 @@ export async function getUniqueProductsById(req: AuthenticatedRequest, res: Resp
         return res.sendStatus(httpStatus.INTERNAL_SERVER_ERROR);
     }
 }
-/*
+
 export async function createProduct(req: AuthenticatedAdminRequest, res: Response){
     try {        
 
-        const isValid = newCategorySCHEMA.validate(req.body, {abortEarly: false})
+        const isValid = createProductSCHEMA.validate(req.body, {abortEarly: false})
 
         if(isValid.error){
             return res.sendStatus(httpStatus.BAD_REQUEST)
         }
 
-        const { name } = req.body
+        await productService.verifyBody(req.body)
 
-        await categoryService.verifyName(name)
-
-        await categoryService.createCategory({ name })
+        await productService.createProduct(req.body)
 
         return res.sendStatus(httpStatus.CREATED)
         
@@ -117,6 +116,7 @@ export async function createProduct(req: AuthenticatedAdminRequest, res: Respons
         return res.sendStatus(httpStatus.INTERNAL_SERVER_ERROR);
     }
 }
+/*
 export async function putCategory(req: AuthenticatedAdminRequest, res: Response){
     try {        
 
