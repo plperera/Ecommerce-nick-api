@@ -3,6 +3,7 @@ import httpStatus from "http-status";
 import { AuthenticatedAdminRequest } from "@/middlewares/auth/authenticationAdmin-middlerare";
 import imageService from "@/services/image-service";
 import { AuthenticatedAdminRequestWithPublicURL } from "@/middlewares/image/uploadImage-middleware";
+import { deleleImageSCHEMA } from "@/schemas/image/deleteImageSCHEMA";
 
 export async function getAllImages(req: AuthenticatedAdminRequest, res: Response){
     try {        
@@ -42,28 +43,25 @@ export async function createImage(req: AuthenticatedAdminRequestWithPublicURL, r
 export async function deleteImage(req: AuthenticatedAdminRequestWithPublicURL, res: Response){
     try {        
 
-        //const isValid = deleteImageSCHEMA.validate(req.body, {abortEarly: false})
+        const isValid = deleleImageSCHEMA.validate(req.body, {abortEarly: false})
 
         if(isValid.error){
             return res.sendStatus(httpStatus.BAD_REQUEST)
         }
 
-        const { id } = req.body
+        const { imageId } = req.body
         
-        await imageService.createImageRef( id )
+        await imageService.deleteImageRef(imageId)
 
-        return res.sendStatus(httpStatus.CREATED)
+        return res.sendStatus(httpStatus.OK)
 
 
     } catch (error) {
-        if(error.name === "ConflictError") {
-            return res.sendStatus(httpStatus.CONFLICT);
+        if(error.name === "NotFoundError") {
+            return res.sendStatus(httpStatus.NOT_FOUND);
         }
         if (error.name === "BadRequestError") {
             return res.status(httpStatus.BAD_REQUEST).send(error);
-        }
-        if (error.name === "ForbiddenError") {
-            return res.status(httpStatus.FORBIDDEN).send(error);
         }
         return res.sendStatus(httpStatus.INTERNAL_SERVER_ERROR);
     }

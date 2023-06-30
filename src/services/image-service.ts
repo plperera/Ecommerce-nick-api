@@ -15,10 +15,32 @@ async function createImageRef( imageURL: string ){
 
     return 
 }
+async function deleteImageRef( imageId: number ){
+
+    const hasImage = await imageRepository.findById(imageId)
+
+    if (!hasImage){
+        throw notFoundError("Imagem não encontrada")
+    }
+
+    await deleteProductImageRef(imageId)
+
+    await imageRepository.deleteImageRef(imageId)
+
+    return 
+}
+
+async function deleteProductImageRef( imageId: number ){
+
+    await imageRepository.deleteProductImageRef(imageId)
+
+    return 
+}
 
 const imageService = {
     getAllImagesData,
-    createImageRef
+    createImageRef,
+    deleteImageRef
 }
 
 export default imageService

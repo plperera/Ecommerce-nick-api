@@ -11,7 +11,6 @@ import { adminAuthRouter } from "./routers/auth/adminAuth-router";
 import { shippingRouter } from "./routers/shipping-router";
 import { categoryRouter } from "./routers/category-router";
 import { productRouter } from "./routers/product-router";
-import { testeRouter } from "./routers/teste-router";
 import { imageRouter } from "./routers/image-router";
 
 loadEnv();
@@ -29,7 +28,6 @@ app
   .use("/category", categoryRouter)
   .use("/product", productRouter)
   .use("/image", imageRouter)
-  .use("/teste", testeRouter)
 
 export function init(): Promise<Express> {
   connectDb();
