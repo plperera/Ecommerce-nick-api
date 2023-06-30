@@ -1,57 +1,122 @@
-import { Request, Response } from "express";
-import httpStatus from "http-status";
-import { newClientSCHEMA } from "@/schemas/newClientSCHEMA ";
-import clientService from "@/services/client-service/client-service";
-import { clients } from "@prisma/client";
-import { newProductSCHEMA } from "@/schemas/newProductSCHEMA";
-import productService from "@/services/product-service/product-service";
+import { conflictError } from "@/errors/conflict-error";
+import { forbiddenError } from "@/errors/forbidden-error";
+import { notFoundError } from "@/errors/not-found-error";
+import productRepository, { productBodyResponse, productUniqueBodyResponse } from "@/repositories/product-repository";
 
-export async function newProduct(req: Request, res: Response) {
+function FormatProducts(productsArray: productBodyResponse){
 
-    try {
+    const result = productsArray.map(product => ({
+        productId: product.id,
+        name: product.name,
+        description: product.description,
+        price: product.price,
+        categories: product.productCategory.map(e => ({
+          categoryId: e.category.id,
+          name: e.category.name
+        })),
+        images: product.productImage.map(e => ({
+          mainImage: e.mainImage,
+          imageUrl: e.image.imageUrl
+        }))
+    }));
 
-        const isValid = newProductSCHEMA.validate(req.body, {abortEarly: false})
-
-        if(isValid.error){
-            return res.status(httpStatus.BAD_REQUEST).send(isValid.error)
-        }
-
-        const newProduct = await productService.createProduct(req.body)
-
-        return res.status(httpStatus.CREATED).send(newProduct)
-
-        
-    } catch (error) {
-
-        if (error.name === "UnauthorizedError") {
-            return res.status(httpStatus.UNAUTHORIZED);
-          }
-        if(error.name === "ConflictError") {
-            res.sendStatus(httpStatus.CONFLICT);
-          }
-        if (error.name === "NotFoundError") {
-            return res.status(httpStatus.NOT_FOUND).send(error);
-        }
-        if (error.name === "ForbiddenError") {
-            return res.status(httpStatus.FORBIDDEN).send(error);
-        } else {
-            return res.sendStatus(httpStatus.INTERNAL_SERVER_ERROR);
-        }      
-    }
+    return result
 }
-export async function getAllProducts(req: Request, res: Response) {
+async function getAllProductsData(){
 
-    try {
+    const result = await productRepository.findAllActive()
 
-        const allProducts = await productService.getAllProducts()
-        return res.status(httpStatus.OK).send(allProducts)
+    const formattedProducts = FormatProducts(result)  
 
-        
-    } catch (error) {
-          
-        return res.sendStatus(httpStatus.INTERNAL_SERVER_ERROR);
+    return formattedProducts
+}
+async function getAllProductsDataByCategoryId( categoryId: number ){
 
+    const result = await productRepository.findAllProductsActiveByCategoryId(categoryId)
+
+    const formattedProducts = FormatProducts(result)  
+
+    return formattedProducts
+}
+async function getUniqueProductDataById( productId: number ): Promise<productUniqueBodyResponse | []> {
+
+    const result = await productRepository.findProductById( productId )
+
+    if (result) {
+        const formattedProduct = {
+            productId: result.id,
+            name: result.name,
+            description: result.description,
+            price: result.price,
+            categories: result.productCategory.map(e => ({
+                categoryId: e.category.id,
+                name: e.category.name
+            })),
+            images: result.productImage.map(e => ({
+                mainImage: e.mainImage,
+                imageUrl: e.image.imageUrl
+            }))
+        }; 
+        //return formattedProduct
+    } 
+    
+    return []
+
+}
+/*
+async function verifyName(name: string){
+
+    const result = await categoryRepository.findByName(name)
+
+    if ( result ){
+        throw conflictError("Nome de categoria já existente")
     }
+
+    return 
+}
+async function verifyNameBelongsId ({ name, id }: Omit<putShippingBody, "price">){
+
+    const result = await categoryRepository.findByName(name)
+
+    if ( result && result?.id !== id){
+        throw conflictError("Nome de categoria já atrelada a outro id")
+    }
+
+    return 
+}
+async function verifyValidId(id: number){
+
+    const result = await categoryRepository.findById(id)
+
+    if ( !result ){
+        throw notFoundError("Não existe categoria com o ID passado")
+    }
+
+    return 
+}
+async function createCategory({ name }: newCategoryBody){
+
+    await categoryRepository.createCategory({ name })
+
+    return 
+}
+async function putCategory({ name, id }: putCategoryBody){
+
+    await categoryRepository.putCategory({ name, id })
+
+    return 
+}
+async function disableCategory(id: number){
+
+    await categoryRepository.disableCategory( id )
+
+    return 
+}
+*/
+const productService = {
+    getAllProductsData,
+    getAllProductsDataByCategoryId,
+    getUniqueProductDataById
 }
 
-
+export default productService

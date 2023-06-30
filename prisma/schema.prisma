@@ -96,6 +96,7 @@ model product {
   price             Int         
   stock             Int         
   salesAmount       Int         
+  isActive          Boolean     @default(true)
   createdAt         DateTime    @default(now())
   updatedAt         DateTime    @updatedAt
 

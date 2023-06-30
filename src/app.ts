@@ -10,9 +10,10 @@ import { authRouter } from "./routers/auth/auth-router";
 import { adminAuthRouter } from "./routers/auth/adminAuth-router";
 import { shippingRouter } from "./routers/shipping-router";
 import { categoryRouter } from "./routers/category-router";
+import { productRouter } from "./routers/product-router";
+import { testeRouter } from "./routers/teste-router";
 
 loadEnv();
-
 
 const app = express();
 app
@@ -25,6 +26,8 @@ app
   .use("/address", addressRouter)
   .use("/shipping", shippingRouter)
   .use("/category", categoryRouter)
+  .use("/product", productRouter)
+  .use("/teste", testeRouter)
 
 export function init(): Promise<Express> {
   connectDb();
