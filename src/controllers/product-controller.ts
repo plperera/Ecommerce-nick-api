@@ -7,6 +7,7 @@ import { getProductByCategorySCHEMA } from "@/schemas/product/getProductByCatego
 import { getUniqueProductSCHEMA } from "@/schemas/product/getUniqueProductSCHEMA";
 import { createProductSCHEMA } from "@/schemas/product/createProductSCHEMA";
 import { putProductSCHEMA } from "@/schemas/product/putProductSCHEMA";
+import { disableProductSCHEMA } from "@/schemas/product/deleteProductSCHEMA";
 
 export async function getAllProducts(req: AuthenticatedRequest, res: Response){
     try {        
@@ -133,7 +134,42 @@ export async function putProduct(req: AuthenticatedAdminRequest, res: Response){
 
         await productService.putProduct(req.body)
 
-        return res.sendStatus(httpStatus.CREATED)
+        return res.sendStatus(httpStatus.OK)
+        
+
+    } catch (error) {
+        if(error.name === "ConflictError") {
+            return res.sendStatus(httpStatus.CONFLICT);
+        }
+        if (error.name === "BadRequestError") {
+            return res.status(httpStatus.BAD_REQUEST).send(error);
+        }
+        if (error.name === "ForbiddenError") {
+            return res.status(httpStatus.FORBIDDEN).send(error);
+        }
+        return res.sendStatus(httpStatus.INTERNAL_SERVER_ERROR);
+    }
+}
+export async function disableProduct(req: AuthenticatedAdminRequest, res: Response){
+    try {        
+
+        const isValid = disableProductSCHEMA.validate(req.body, {abortEarly: false})
+
+        if(isValid.error){
+            return res.sendStatus(httpStatus.BAD_REQUEST)
+        }
+
+        const { id } = req.body
+
+        const result = await productService.getUniqueProductDataById( id )
+
+        if ( !result ){
+            return res.sendStatus(httpStatus.BAD_REQUEST)
+        }
+
+        await productService.disableProduct(id)
+
+        return res.sendStatus(httpStatus.OK)
         
 
     } catch (error) {

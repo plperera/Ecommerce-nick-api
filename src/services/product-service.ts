@@ -182,6 +182,11 @@ async function putProduct( body: putProductBody ) {
         salesNumber: body.salesNumber
     })
 }
+async function disableProduct( id: number ) {
+
+    productRepository.disableProduct(id)
+    return
+}
 const productService = {
     getAllProductsData,
     getAllProductsDataByCategoryId,
@@ -190,7 +195,8 @@ const productService = {
     verifyName,
     verifyNameBelongsId,
     createProduct,
-    putProduct
+    putProduct,
+    disableProduct
 }
 
 export default productService

@@ -213,6 +213,16 @@ async function putProduct(body: Omit<putProductBody, "categories" | "images">){
         }
     });
 }
+async function disableProduct(id: number){
+    return prisma.product.update({
+        where:{
+            id: id
+        },
+        data: {
+            isActive: false
+        }
+    });
+}
 
 const productRepository = {
     findAllActive,
@@ -224,7 +234,8 @@ const productRepository = {
     createProduct,
     deleteManyCategoriesProduct,
     deleteManyImagesProduct,
-    putProduct
+    putProduct,
+    disableProduct
 }
 
 export default productRepository
