@@ -13,6 +13,8 @@ model shipping {
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
   isActive    Boolean   @default(true)
+
+  order           order[]
 }
 model session {
   id          Int       @id @default(autoincrement())
@@ -62,7 +64,8 @@ model address {
   createdAt       DateTime   @default(now())
   updatedAt       DateTime   @updatedAt
 
-  user        user?     @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  order           order[]
+  user            user?     @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
 model user {
@@ -76,6 +79,7 @@ model user {
   session       session[]
   enrollment    enrollment[]
   address       address[]
+  order         order[]
 }
 
 model userAdmin {
@@ -102,7 +106,7 @@ model product {
 
   productCategory   productCategory[]
   productImage      productImage[]
-
+  orderProduct      orderProduct[]
 }
 model productCategory {
   id                Int          @id @default(autoincrement())
@@ -135,4 +139,38 @@ model image {
   updatedAt         DateTime    @updatedAt
 
   productImage      productImage[]
+}
+enum OrderStatus {
+  PENDING
+  PROCESSING
+  SHIPPED
+  DELIVERED
+  CANCELLED
+}
+model order {
+  id                Int             @id @default(autoincrement())
+  userId            Int      
+  addressId         Int      
+  shippingId        Int         
+  status            OrderStatus     @default(PENDING)
+  totalPrice        Int             @default(0)
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+
+  user              user?           @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  address           address?        @relation(fields: [addressId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  shipping          shipping?       @relation(fields: [shippingId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  orderProduct      orderProduct[]
+}
+model orderProduct {
+  id                Int         @id @default(autoincrement())
+  orderId           Int      
+  productId         Int      
+  quantity          Int         
+  price             Int         
+  createdAt         DateTime    @default(now())
+
+  order             order?      @relation(fields: [orderId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  product           product?    @relation(fields: [productId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }

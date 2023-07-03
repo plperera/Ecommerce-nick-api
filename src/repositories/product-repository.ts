@@ -28,6 +28,7 @@ export type productUniqueBodyResponse = {
     name: string;
     description: string;
     price: number;
+    isActive: boolean,
     categories: {
       categoryId: number;
       name: string;
@@ -128,13 +129,14 @@ async function findAllProductsActiveByCategoryId(categoryId: number){
 async function findProductById(productId: number){
     return prisma.product.findUnique({
         where: {
-            id: productId
+            id: productId,
         },
         select: {
         id: true,
         name: true,
         description: true,
         price: true,
+        isActive: true,
         productCategory: {
             select: {
                 category: {

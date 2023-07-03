@@ -12,6 +12,7 @@ import { shippingRouter } from "./routers/shipping-router";
 import { categoryRouter } from "./routers/category-router";
 import { productRouter } from "./routers/product-router";
 import { imageRouter } from "./routers/image-router";
+import { orderRouter } from "./routers/order-router";
 
 loadEnv();
 
@@ -28,6 +29,7 @@ app
   .use("/category", categoryRouter)
   .use("/product", productRouter)
   .use("/image", imageRouter)
+  .use("/order", orderRouter)
 
 export function init(): Promise<Express> {
   connectDb();
