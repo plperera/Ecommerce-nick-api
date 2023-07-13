@@ -104,6 +104,7 @@ model product {
   createdAt         DateTime    @default(now())
   updatedAt         DateTime    @updatedAt
 
+  tecnicDetails     tecnicDetails[]
   productCategory   productCategory[]
   productImage      productImage[]
   orderProduct      orderProduct[]
@@ -131,6 +132,15 @@ model category {
   isActive          Boolean     @default(true)
 
   productCategory   productCategory[]
+}
+model tecnicDetails {
+  id                Int         @id @default(autoincrement())
+  topic             String 
+  topicDetail       String?    
+  updatedAt         DateTime    @updatedAt
+  productId         Int
+
+  product           product[]
 }
 model image {
   id                Int         @id @default(autoincrement())

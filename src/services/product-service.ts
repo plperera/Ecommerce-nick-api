@@ -22,6 +22,10 @@ function FormatProducts(productsArray: productBodyResponse){
         images: product.productImage.map(e => ({
           mainImage: e.mainImage,
           imageUrl: e.image.imageUrl
+        })),
+        tecnicDetails: product.tecnicDetails.map(e => ({
+            topic: e.topic,
+            topicDetail: e.topicDetail
         }))
     }));
 
@@ -79,6 +83,10 @@ async function getUniqueProductDataById( productId: number ) {
         images: result.productImage.map(e => ({
             mainImage: e.mainImage,
             imageUrl: e.image.imageUrl
+        })),
+        tecnicDetails: result.tecnicDetails.map(e => ({
+            topic: e.topic,
+            topicDetail: e.topicDetail
         }))
     }; 
     
@@ -104,7 +112,6 @@ async function verifyCategoryAndImageArrays( body: createProductBody ) {
     })
 
     return
-
 }
 async function verifyName( name: string ) {
 
@@ -136,6 +143,12 @@ async function createProduct( body: createProductBody ) {
 
     const image = justOneTrue(body.images)
 
+    const newTecnincDetails = body.tecnicDetails.map(e => ({
+        productId: productData.id,
+        topic: e.topic,
+        topicDetail: e.topicDetail
+    }));
+
     const newCategoryArray = body.categories.map(e => ({
         categoryId: e.categoryId,
         productId: productData.id
@@ -147,8 +160,8 @@ async function createProduct( body: createProductBody ) {
         productId: productData.id
     }));
 
+    await productRepository.createManyTecnicDetails(newTecnincDetails)
     await productRepository.createManyCategoriesProduct(newCategoryArray)
-    
     await productRepository.createManyImagesProduct(newImagesArray)
 
 }
@@ -156,6 +169,12 @@ async function putProduct( body: putProductBody ) {
 
     const image = justOneTrue(body.images)
 
+    const newTecnincDetails = body.tecnicDetails.map(e => ({
+        productId: body.id,
+        topic: e.topic,
+        topicDetail: e.topicDetail
+    }));
+
     const newCategoryArray = body.categories.map(e => ({
         categoryId: e.categoryId,
         productId: body.id
@@ -167,9 +186,11 @@ async function putProduct( body: putProductBody ) {
         productId: body.id
     }));
 
+    await productRepository.deleteManyTecnincDetails(body.id)
     await productRepository.deleteManyCategoriesProduct(body.id)
     await productRepository.deleteManyImagesProduct(body.id)
 
+    await productRepository.createManyTecnicDetails(newTecnincDetails)
     await productRepository.createManyCategoriesProduct(newCategoryArray)
     await productRepository.createManyImagesProduct(newImagesArray)
 

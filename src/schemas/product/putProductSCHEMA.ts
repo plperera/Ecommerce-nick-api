@@ -1,6 +1,7 @@
 import joi from "joi"
+import { categoriesArray, imagesArray, tecnicDetailsArray } from "./createProductSCHEMA"
 
-export type putProductBody = productBody & categoriesArray & imagesArray
+export type putProductBody = productBody & categoriesArray & imagesArray & tecnicDetailsArray
 
 export type productBody = {
     id: number,
@@ -9,17 +10,6 @@ export type productBody = {
     price: number,
     stock: number,
     salesNumber: number
-}
-export type categoriesArray = {
-    categories: {
-        categoryId: number,
-    }[],
-}
-export type imagesArray = {
-    images: {
-        mainImage: boolean,
-        imageId: number
-    }[]
 }
 
 const putProductSCHEMA = joi.object<putProductBody>({
