@@ -4,7 +4,8 @@ async function findAll(){
     return prisma.image.findMany({
         select: {
             id: true,
-            imageUrl: true
+            imageUrl: true,
+            imageName: true
         }
     });
 }
@@ -15,10 +16,11 @@ async function findById( imageId: number ){
         }
     });
 }
-async function createImageRef( imageURL: string ){
+async function createImageRef( {imageURL, name}: {imageURL: string, name: string} ){
     return prisma.image.create({
        data: {
-        imageUrl: imageURL
+        imageUrl: imageURL,
+        imageName: name
        }
     });
 }

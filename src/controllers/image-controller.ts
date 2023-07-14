@@ -4,6 +4,7 @@ import { AuthenticatedAdminRequest } from "@/middlewares/auth/authenticationAdmi
 import imageService from "@/services/image-service";
 import { AuthenticatedAdminRequestWithPublicURL } from "@/middlewares/image/uploadImage-middleware";
 import { deleleImageSCHEMA } from "@/schemas/image/deleteImageSCHEMA";
+import { format } from "date-fns";
 
 export async function getAllImages(req: AuthenticatedAdminRequest, res: Response){
     try {        
@@ -21,8 +22,14 @@ export async function createImage(req: AuthenticatedAdminRequestWithPublicURL, r
     try {        
 
         const imageURL = req.publicImageFileFireBaseURL
+
+        let { name } = req.body
+
+        if (!name) {
+            name = format((new Date()), 'dd/MM/yyyy')
+        }
         
-        await imageService.createImageRef( imageURL )
+        await imageService.createImageRef({ imageURL, name })
 
         return res.sendStatus(httpStatus.CREATED)
 
@@ -37,6 +44,7 @@ export async function createImage(req: AuthenticatedAdminRequestWithPublicURL, r
         if (error.name === "ForbiddenError") {
             return res.status(httpStatus.FORBIDDEN).send(error);
         }
+        console.log(error)
         return res.sendStatus(httpStatus.INTERNAL_SERVER_ERROR);
     }
 }

@@ -12,7 +12,6 @@ export async function uploadImage(req: AuthenticatedAdminRequestWithPublicURL, r
 
     const imageFile = req.file
 
-
     const fileName = `${Date.now()}.${imageFile.originalname.split(".").pop()}`;
 
     const buckerFile = bucket.file(fileName);
@@ -24,8 +23,6 @@ export async function uploadImage(req: AuthenticatedAdminRequestWithPublicURL, r
     })
     
     stream.on("error", (err) => {
-
-        console.log(err)
 
         res.sendStatus(httpStatus.INTERNAL_SERVER_ERROR)
 

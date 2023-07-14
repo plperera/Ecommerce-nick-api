@@ -145,6 +145,7 @@ model tecnicDetails {
 model image {
   id                Int         @id @default(autoincrement())
   imageUrl          String
+  imageName         String
   createdAt         DateTime    @default(now())
   updatedAt         DateTime    @updatedAt
 

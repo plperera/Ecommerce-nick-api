@@ -7,7 +7,7 @@ const categoryRouter = Router()
 
 categoryRouter
     
-    .get("", authenticateToken, getAllCategories)
+    .get("", getAllCategories)
 
     .all("/*", authenticateAdminToken)
     .post("/admin", createCategory)

@@ -10,9 +10,9 @@ const imageRouter = Router()
 imageRouter
 
     .all("/*", authenticateAdminToken)
-    .get("/", getAllImages)
-    .post("/", Multer.single('imageFile'), uploadImage, createImage)
-    .delete("/", deleteImage)
+    .get("/admin", getAllImages)
+    .post("/admin", Multer.single('imageFile'), uploadImage, createImage)
+    .delete("/admin", deleteImage)
     
 
 export { imageRouter }

@@ -94,6 +94,7 @@ export async function createProduct(req: AuthenticatedAdminRequest, res: Respons
         const isValid = createProductSCHEMA.validate(req.body, {abortEarly: false})
 
         if(isValid.error){
+            console.log(isValid.error)
             return res.sendStatus(httpStatus.BAD_REQUEST)
         }
 
