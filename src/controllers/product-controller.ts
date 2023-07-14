@@ -97,9 +97,9 @@ export async function createProduct(req: AuthenticatedAdminRequest, res: Respons
             console.log(isValid.error)
             return res.sendStatus(httpStatus.BAD_REQUEST)
         }
-
+        const { name } = req.body
         await productService.verifyCategoryAndImageArrays(req.body)
-        await productService.verifyName(req.body)
+        await productService.verifyName(name)
 
         await productService.createProduct(req.body)
 
@@ -116,6 +116,7 @@ export async function createProduct(req: AuthenticatedAdminRequest, res: Respons
         if (error.name === "ForbiddenError") {
             return res.status(httpStatus.FORBIDDEN).send(error);
         }
+        console.log(error)
         return res.sendStatus(httpStatus.INTERNAL_SERVER_ERROR);
     }
 }

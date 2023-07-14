@@ -140,7 +140,7 @@ model tecnicDetails {
   updatedAt         DateTime    @updatedAt
   productId         Int
 
-  product           product[]
+  product           product?     @relation(fields: [productId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 model image {
   id                Int         @id @default(autoincrement())

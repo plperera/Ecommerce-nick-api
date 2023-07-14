@@ -35,7 +35,7 @@ const createProductSCHEMA = joi.object<createProductBody>({
     tecnicDetails: joi.array().items(
         joi.object({
             topic: joi.string().min(1).required(),
-            topicDetail: joi.string()
+            topicDetails: joi.string()
         })
     ),
 
