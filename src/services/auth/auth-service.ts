@@ -48,7 +48,7 @@ async function verifyAccees(body: signInBody){
         throw unauthorizedError("Senha invalida")
     }
 
-    return { userId: hasUser.id }
+    return { userId: hasUser.id, email: hasUser.email, name: hasUser.name }
 
 }
 async function createSession(userId: number){

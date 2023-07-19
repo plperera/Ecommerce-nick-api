@@ -12,6 +12,7 @@ export async function signUp(req: Request, res: Response){
         const isValid = signupSCHEMA.validate(req.body, {abortEarly: false})
 
         if(isValid.error){
+            console.log(isValid.error)
             return res.sendStatus(httpStatus.BAD_REQUEST)
         }
         
@@ -46,11 +47,11 @@ export async function signIn(req: Request, res: Response) {
         
         const { email, password } = req.body
         
-        const { userId } = await authService.verifyAccees({ email, password })
+        const { userId, name } = await authService.verifyAccees({ email, password })
         
         const token = await authService.createSession( userId )
 
-        return res.send({token: token}).status(httpStatus.OK)
+        return res.send({token: token, email: email, name: name}).status(httpStatus.OK)
         
 
     } catch (error) {

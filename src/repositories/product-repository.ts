@@ -195,7 +195,40 @@ async function findProductById(productId: number){
 async function findByName(productName: string){
     return prisma.product.findUnique({
         where: {
-            name: productName
+            name: productName,
+        },
+        select: {
+        id: true,
+        name: true,
+        description: true,
+        price: true,
+        isActive: true,
+        tecnicDetails: {
+            select: {
+                topic: true,
+                topicDetail: true,
+            }
+        },
+        productCategory: {
+            select: {
+                category: {
+                    select: {
+                        id: true,
+                        name: true
+                    }
+                }
+            }
+        },
+        productImage: {
+            select: {
+                mainImage: true,
+                image: {
+                    select: {
+                        imageUrl: true
+                    }
+                }
+            }
+        }
         }
     });
 }

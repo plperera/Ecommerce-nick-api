@@ -93,6 +93,36 @@ async function getUniqueProductDataById( productId: number ) {
     return formattedProduct
     
 }
+async function getUniqueProductDataByName( productName: string ) {
+
+    const result = await productRepository.findByName( productName )
+
+    if (!result) {
+        throw notFoundError("Produto não encontrado") 
+    } 
+
+    const formattedProduct = {
+        productId: result.id,
+        name: result.name,
+        description: result.description,
+        price: result.price,
+        categories: result.productCategory.map(e => ({
+            categoryId: e.category.id,
+            name: e.category.name
+        })),
+        images: result.productImage.map(e => ({
+            mainImage: e.mainImage,
+            imageUrl: e.image.imageUrl
+        })),
+        tecnicDetails: result.tecnicDetails.map(e => ({
+            topic: e.topic,
+            topicDetail: e.topicDetail
+        }))
+    }; 
+    
+    return formattedProduct
+    
+}
 async function verifyCategoryAndImageArrays( body: createProductBody ) {
 
     const { categories, images } = body
@@ -212,6 +242,7 @@ const productService = {
     getAllProductsData,
     getAllProductsDataByCategoryId,
     getUniqueProductDataById,
+    getUniqueProductDataByName,
     verifyCategoryAndImageArrays,
     verifyName,
     verifyNameBelongsId,

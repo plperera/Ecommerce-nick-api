@@ -8,6 +8,7 @@ import { getUniqueProductSCHEMA } from "@/schemas/product/getUniqueProductSCHEMA
 import { createProductSCHEMA } from "@/schemas/product/createProductSCHEMA";
 import { putProductSCHEMA } from "@/schemas/product/putProductSCHEMA";
 import { disableProductSCHEMA } from "@/schemas/product/deleteProductSCHEMA";
+import { getByNameUniqueProductSCHEMA } from "@/schemas/product/getByNameUniqueProductSCHEMA";
 
 export async function getAllProducts(req: AuthenticatedRequest, res: Response){
     try {        
@@ -51,6 +52,35 @@ export async function getAllProductsByCategoryId(req: AuthenticatedRequest, res:
             return res.sendStatus(httpStatus.CONFLICT);
         }
         if (error.name === "BadRequestError") {
+            return res.status(httpStatus.BAD_REQUEST).send(error);
+        }
+        if (error.name === "ForbiddenError") {
+            return res.status(httpStatus.FORBIDDEN).send(error);
+        }
+        return res.sendStatus(httpStatus.INTERNAL_SERVER_ERROR);
+    }
+}
+export async function getUniqueProductsByName(req: AuthenticatedRequest, res: Response){
+    try {        
+        const { productName } = req.params
+
+        const isValid = getByNameUniqueProductSCHEMA.validate( {productName: productName}, {abortEarly: false})
+
+        if(isValid.error){
+            return res.sendStatus(httpStatus.BAD_REQUEST)
+        }
+
+        const Product = await productService.getUniqueProductDataByName( productName )
+
+        return res.send(Product).status(httpStatus.OK)
+        
+
+    } catch (error) {
+        if(error.name === "ConflictError") {
+            return res.sendStatus(httpStatus.CONFLICT);
+        }
+        if (error.name === "BadRequestError") {
+            console.log(error)
             return res.status(httpStatus.BAD_REQUEST).send(error);
         }
         if (error.name === "ForbiddenError") {

@@ -80,6 +80,7 @@ model user {
   enrollment    enrollment[]
   address       address[]
   order         order[]
+  payment      payment[]
 }
 
 model userAdmin {
@@ -163,6 +164,7 @@ model order {
   userId            Int      
   addressId         Int      
   shippingId        Int         
+  paymentId         Int         
   status            OrderStatus     @default(PENDING)
   totalPrice        Int             @default(0)
   createdAt         DateTime        @default(now())
@@ -171,8 +173,21 @@ model order {
   user              user?           @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   address           address?        @relation(fields: [addressId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   shipping          shipping?       @relation(fields: [shippingId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  payment           payment?        @relation(fields: [paymentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
   orderProduct      orderProduct[]
+}
+model payment {
+  id                Int             @id @default(autoincrement())
+  userId            Int      
+  amount            Int      
+  status            Int      
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+
+  user              user?           @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  order             order[]
 }
 model orderProduct {
   id                Int         @id @default(autoincrement())
