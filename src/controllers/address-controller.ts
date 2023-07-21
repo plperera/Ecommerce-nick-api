@@ -1,8 +1,6 @@
 import { Request, Response } from "express";
 import httpStatus from "http-status";
 import { AuthenticatedRequest } from "@/middlewares/auth/authentication-middlerare";
-import enrollmentService from "@/services/enrollment-service";
-import { enrollmentSCHEMA } from "@/schemas/enrollment/createEnrollmentSCHEMA";
 import addressService from "@/services/address-service";
 import { addressSCHEMA } from "@/schemas/address/addressSCHEMA";
 import { updateAddressSCHEMA } from "@/schemas/address/updateAddressSCHEMA";
@@ -41,9 +39,11 @@ export async function newAddress(req: AuthenticatedRequest, res: Response){
 
         const { userId } = req
 
+        await addressService.verifyLimitAddress( userId )
+
         await addressService.createNewAddress({...req.body, userId})
 
-        return res.sendStatus(httpStatus.OK)
+        return res.sendStatus(httpStatus.CREATED)
         
 
     } catch (error) {

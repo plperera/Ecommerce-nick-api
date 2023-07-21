@@ -82,7 +82,9 @@ async function createNewOrder({body, userId}: {body: createOrderBody, userId: nu
         return sum + product.amount;
     }, 0);
 
-    const newOrder = await orderRepository.createNewOrder({body, userId, totalPrice})
+    const paymentId = 1
+
+    const newOrder = await orderRepository.createNewOrder({body, userId, totalPrice, paymentId})
 
     const newCategoryArray = body.products.map(e => ({      
         orderId: newOrder.id,

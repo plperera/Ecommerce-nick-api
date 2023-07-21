@@ -4,7 +4,7 @@ import { forbiddenError } from "@/errors/forbidden-error";
 import { notFoundError } from "@/errors/not-found-error";
 import categoryRepository from "@/repositories/category-repository";
 import imageRepository from "@/repositories/image-repository";
-import productRepository, { productBodyResponse, productUniqueBodyResponse } from "@/repositories/product-repository";
+import productRepository, { productBodyResponse, productCartBodyResponse, productUniqueBodyResponse } from "@/repositories/product-repository";
 import { createProductBody, imagesArray } from "@/schemas/product/createProductSCHEMA";
 import { putProductBody } from "@/schemas/product/putProductSCHEMA";
 
@@ -31,6 +31,21 @@ function FormatProducts(productsArray: productBodyResponse){
 
     return result
 }
+function FormatProductsForCart(productsArray: productCartBodyResponse){
+
+    const result = productsArray.map(product => ({
+        productId: product.id,
+        name: product.name,
+        description: product.description,
+        price: product.price,
+        images: product.productImage.map(e => ({
+          mainImage: e.mainImage,
+          imageUrl: e.image.imageUrl
+        }))
+    }));
+
+    return result
+}
 function justOneTrue(images: { mainImage: boolean, imageId: number }[]) {
 
     let hasMain = false
@@ -52,6 +67,13 @@ async function getAllProductsData(){
     const result = await productRepository.findAllActive()
 
     const formattedProducts = FormatProducts(result)  
+
+    return formattedProducts
+}
+async function getAllProductsDataById(productIdArray: {productId: number}[]){
+
+    const result = await productRepository.findAllActiveById(productIdArray)
+    const formattedProducts = FormatProductsForCart(result)  
 
     return formattedProducts
 }
@@ -243,6 +265,7 @@ const productService = {
     getAllProductsDataByCategoryId,
     getUniqueProductDataById,
     getUniqueProductDataByName,
+    getAllProductsDataById,
     verifyCategoryAndImageArrays,
     verifyName,
     verifyNameBelongsId,

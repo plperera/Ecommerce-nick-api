@@ -13,6 +13,7 @@ import { categoryRouter } from "./routers/category-router";
 import { productRouter } from "./routers/product-router";
 import { imageRouter } from "./routers/image-router";
 import { orderRouter } from "./routers/order-router";
+import { paymentRouter } from "./routers/payment-router";
 
 loadEnv();
 
@@ -28,6 +29,7 @@ app
   .use("/shipping", shippingRouter)
   .use("/category", categoryRouter)
   .use("/product", productRouter)
+  .use("/payment", paymentRouter)
   .use("/image", imageRouter)
   .use("/order", orderRouter)
 

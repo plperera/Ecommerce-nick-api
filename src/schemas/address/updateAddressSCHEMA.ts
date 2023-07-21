@@ -10,6 +10,7 @@ export type updateAddressBody = addressId & addressBody
 const updateAddressSCHEMA = joi.object<updateAddressBody>({
 
     addressId: joi.number().required(), 
+    addressName: joi.string().required(),
     cep: joi.string().required().min(8), 
     street: joi.string().required(),
     city: joi.string().required(),

@@ -4,6 +4,7 @@ import { putCategoryBody } from "@/schemas/category/putCategorySCHEMA";
 import { createOrderBody } from "@/schemas/order/createProductSCHEMA";
 import { categoriesArray, productBody } from "@/schemas/product/createProductSCHEMA";
 import { putProductBody } from "@/schemas/product/putProductSCHEMA";
+import { payment } from "mercadopago";
 
 
 type ProductBody = {
@@ -53,13 +54,14 @@ async function findAllOrderByUser( userId: number ){
         }
     })
 }
-async function createNewOrder({body, userId, totalPrice}: {body: createOrderBody, userId: number, totalPrice: number}){
+async function createNewOrder({body, userId, totalPrice, paymentId}: {body: createOrderBody, userId: number, totalPrice: number, paymentId: number}){
     return prisma.order.create({
         data: {
             userId: userId,
             addressId: body.addressId,
             shippingId: body.methodId,
-            totalPrice: totalPrice
+            totalPrice: totalPrice,
+            paymentId: paymentId
         }
     })
 

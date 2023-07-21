@@ -1,6 +1,7 @@
 import joi from "joi"
 
 export type addressBody = {
+    addressName: string,
     cep: string,
     street: string,
     city: string,
@@ -12,6 +13,7 @@ export type addressBody = {
 
 const addressSCHEMA = joi.object<addressBody>({
 
+    addressName: joi.string().required(),
     cep: joi.string().required().min(8), 
     street: joi.string().required(),
     city: joi.string().required(),

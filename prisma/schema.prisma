@@ -53,6 +53,7 @@ model address {
   id              Int        @id @default(autoincrement())
   userId          Int 
   mainAddress     Boolean    @default(true)
+  addressName     String
   cep             String
   street          String
   city            String

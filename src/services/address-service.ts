@@ -1,11 +1,9 @@
-import enrollmentRepository from "@/repositories/enrollment-repository";
 import { userIdBody } from "@/schemas/auth/authTokenSCHEMA";
-import { forbiddenError } from "@/errors/forbidden-error";
-import { enrollmentBody } from "@/schemas/enrollment/createEnrollmentSCHEMA";
 import addressRepository from "@/repositories/address-repository";
 import { addressBody } from "@/schemas/address/addressSCHEMA";
 import { addressId, updateAddressBody } from "@/schemas/address/updateAddressSCHEMA";
 import { notFoundError } from "@/errors/not-found-error";
+import { forbiddenError } from "@/errors/forbidden-error";
 
 async function getAddressByUserId(userId: number){
 
@@ -13,6 +11,16 @@ async function getAddressByUserId(userId: number){
 
     return result
 
+}
+async function verifyLimitAddress(userId: number){
+
+    const allUsersAddress = await addressRepository.findManyActiveByUserId(userId)
+
+    if(allUsersAddress.length >= 4) {
+        throw forbiddenError("O usuario chegou no limite de endereços cadastrados")
+    }
+
+    return
 }
 async function createNewAddress(body: addressBody & userIdBody){
 
@@ -71,7 +79,8 @@ const addressService = {
     createNewAddress,
     updateAddress,
     disableAddress,
-    changeToMainAddress
+    changeToMainAddress,
+    verifyLimitAddress
 }
 
 export default addressService

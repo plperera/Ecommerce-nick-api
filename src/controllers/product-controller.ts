@@ -31,6 +31,41 @@ export async function getAllProducts(req: AuthenticatedRequest, res: Response){
         return res.sendStatus(httpStatus.INTERNAL_SERVER_ERROR);
     }
 }
+export async function getAllProductsById(req: Request, res: Response){
+    try {    
+
+        const stringArray: string[] = JSON.parse(decodeURIComponent(req.params.productIdArray));
+
+        const productIdArray: {productId: number}[] = stringArray.map(e => ({productId: Number(e)}))
+
+        for (let i = 0; i < productIdArray.length; i++) {
+
+            if(typeof productIdArray[i].productId !== 'number' || !productIdArray[i]){
+                console.log(productIdArray[i])
+                return res.sendStatus(httpStatus.BAD_REQUEST)
+            }
+            
+        }
+                
+        const AllProductsById = await productService.getAllProductsDataById(productIdArray)
+
+        return res.send(AllProductsById).status(httpStatus.OK)
+        
+
+    } catch (error) {
+        if(error.name === "ConflictError") {
+            return res.sendStatus(httpStatus.CONFLICT);
+        }
+        if (error.name === "BadRequestError") {
+            return res.status(httpStatus.BAD_REQUEST).send(error);
+        }
+        if (error.name === "ForbiddenError") {
+            return res.status(httpStatus.FORBIDDEN).send(error);
+        }
+        console.log(error)
+        return res.sendStatus(httpStatus.INTERNAL_SERVER_ERROR);
+    }
+}
 export async function getAllProductsByCategoryId(req: AuthenticatedRequest, res: Response){
     try {        
 
@@ -124,7 +159,6 @@ export async function createProduct(req: AuthenticatedAdminRequest, res: Respons
         const isValid = createProductSCHEMA.validate(req.body, {abortEarly: false})
 
         if(isValid.error){
-            console.log(isValid.error)
             return res.sendStatus(httpStatus.BAD_REQUEST)
         }
         const { name } = req.body

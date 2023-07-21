@@ -43,6 +43,7 @@ async function setUniqueToMainAddress(addressId: number){
 async function create(body: addressBody & userIdBody){
     return prisma.address.create({
         data: {
+            addressName: body.addressName,
             cep: body.cep,
             city: body.city,
             neighborhood: body.neighborhood,
@@ -60,6 +61,7 @@ async function update(body: updateAddressBody & userIdBody){
             id: body.addressId
         },
         data: {
+            addressName: body.addressName,
             cep: body.cep,
             city: body.city,
             neighborhood: body.neighborhood,

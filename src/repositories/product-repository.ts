@@ -4,6 +4,18 @@ import { putCategoryBody } from "@/schemas/category/putCategorySCHEMA";
 import { categoriesArray, productBody } from "@/schemas/product/createProductSCHEMA";
 import { putProductBody } from "@/schemas/product/putProductSCHEMA";
 
+export type productCartBodyResponse = {
+    id: number;
+    name: string;
+    description: string;
+    price: number;
+    productImage: {
+        mainImage: boolean;
+        image: {
+            imageUrl: string;
+        };
+    }[];
+}[]
 export type productBodyResponse = {
     id: number;
     name: string;
@@ -92,6 +104,35 @@ async function findAllActive(){
                     }
                 }
             },
+            productImage: {
+                select: {
+                    mainImage: true,
+                    image: {
+                        select: {
+                            imageUrl: true
+                        }
+                    }
+                }
+            }
+        }     
+    });
+}
+async function findAllActiveById(productIdArray: {productId: number}[]){
+    return prisma.product.findMany({
+        where: {
+            isActive: true,
+            id: {
+                in: productIdArray.map(e => e.productId)
+            }
+        },
+        orderBy: {
+            salesAmount: 'desc'
+        },
+        select: {
+            id: true,
+            name: true,
+            description: true,
+            price: true,
             productImage: {
                 select: {
                     mainImage: true,
@@ -305,6 +346,7 @@ async function disableProduct(id: number){
 
 const productRepository = {
     findAllActive,
+    findAllActiveById,
     findAllProductsActiveByCategoryId,
     findProductById,
     findByName,
