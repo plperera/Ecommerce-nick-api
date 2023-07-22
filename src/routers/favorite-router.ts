@@ -1,4 +1,4 @@
-import { createHomeCategory, createNewBanner, deleteBanner, deleteHomeCategory, getAllBanners, getAllCategoriesHome, updateBanner, updateHomeCategory } from '@/controllers/homepage-controller'
+import { NewFavoriteProduct, RemoveFavoriteProduct, getAllFavorites } from '@/controllers/favorite-controller'
 import { authenticateToken } from '@/middlewares/auth/authentication-middlerare'
 import { Router } from 'express'
 
@@ -7,10 +7,10 @@ const favoriteRouter = Router()
 favoriteRouter
     
     .all("/*", authenticateToken)
-    /*
-    .get("", getAllFavorite)
-    .post("", createFavorite)
-    .delete("", deleteFavorite)
-    */
+    
+    .get("", getAllFavorites)
+    .post("", NewFavoriteProduct)
+    .delete("", RemoveFavoriteProduct)
+   
 
 export { favoriteRouter }
