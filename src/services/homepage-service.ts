@@ -44,11 +44,28 @@ async function createBanner(body: newHomeBannerBody){
     await homePageRepository.createBanner(body)   
     return 
 }
+async function verifyBannerId(bannerId: number){
+
+    const result = await homePageRepository.findBannerById(bannerId)
+
+    if(!result){
+        throw badRequestError("Banner não encontrado")
+    }
+   
+    return 
+}
+async function deleteBanner(bannerId: number){
+
+    await homePageRepository.deleteBannerById(bannerId)
+    return 
+}
 const homePageService = {
     getAllIBannersData,
     getAllCategoriesHomeData,
     verifyImage,
-    createBanner
+    createBanner,
+    verifyBannerId,
+    deleteBanner
 }
 
 export default homePageService

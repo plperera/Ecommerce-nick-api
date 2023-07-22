@@ -39,10 +39,26 @@ async function createBanner(body: newHomeBannerBody){
         }
     });
 }
+async function findBannerById(bannerId: number){
+    return prisma.banner.findFirst({
+        where: {
+            id: bannerId
+        }
+    });
+}
+async function deleteBannerById(bannerId: number){
+    return prisma.banner.delete({
+        where: {
+            id: bannerId
+        }
+    });
+}
 const homePageRepository = {
     findAllIBannersData,
     findAllCategoriesHomeData,
-    createBanner
+    createBanner,
+    findBannerById,
+    deleteBannerById
 }
 
 export default homePageRepository

@@ -1,15 +1,13 @@
 import joi from "joi"
 
-export type newHomeBannerBody = {
-    text: string,
-    imageId: number
+export type deleteHomeBannerBody = {
+    bannerId: string,
 }
 
-const newHomeBannerSCHEMA = joi.object<newHomeBannerBody>({
+const deleteHomeBannerSCHEMA = joi.object<deleteHomeBannerBody>({
 
-    text: joi.string().required().min(1),
-    imageId: joi.number().required(),
+    bannerId: joi.number().required(),
 
 })
 
-export {newHomeBannerSCHEMA}
+export {deleteHomeBannerSCHEMA}

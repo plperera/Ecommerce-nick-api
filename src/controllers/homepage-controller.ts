@@ -7,6 +7,7 @@ import { deleleImageSCHEMA } from "@/schemas/image/deleteImageSCHEMA";
 import { format } from "date-fns";
 import homePageService from "@/services/homepage-service";
 import { newHomeBannerSCHEMA } from "@/schemas/homePage/newHomeBannerSCHEMA";
+import { deleteHomeBannerSCHEMA } from "@/schemas/homePage/deleteHomeBannerSCHEMA";
 
 export async function getAllBanners(req: Request, res: Response){
     try {        
@@ -56,18 +57,19 @@ export async function createNewBanner(req: Request, res: Response){
 export async function deleteBanner(req: Request, res: Response){
     try {       
         
-        const isValid = newHomeBannerSCHEMA.validate(req.body, {abortEarly: false})
+        const isValid = deleteHomeBannerSCHEMA.validate(req.body, {abortEarly: false})
 
         if(isValid.error){
             return res.sendStatus(httpStatus.BAD_REQUEST)
         }
-        const { imageId, text } = req.body
+        
+        const { bannerId } = req.body
 
-        await homePageService.verifyImage(imageId)
+        await homePageService.verifyBannerId(bannerId)
 
-        await homePageService.createBanner({ imageId, text })
+        await homePageService.deleteBanner(bannerId)
 
-        return res.sendStatus(httpStatus.CREATED)
+        return res.sendStatus(httpStatus.OK)
         
 
     } catch (error) {
