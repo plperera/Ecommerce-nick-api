@@ -134,6 +134,27 @@ model category {
   isActive          Boolean     @default(true)
 
   productCategory   productCategory[]
+  homeCategory      homeCategory[]
+}
+model banner {
+  id                Int         @id @default(autoincrement())
+  text              String      
+  imageId           Int
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+
+  image             image?      @relation(fields: [imageId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+model homeCategory {
+  id                Int         @id @default(autoincrement())
+  subTitle          String  
+  categoryId        Int           
+  imageId           Int
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+
+  image             image?      @relation(fields: [imageId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  category          category?   @relation(fields: [categoryId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 model tecnicDetails {
   id                Int         @id @default(autoincrement())
@@ -152,6 +173,8 @@ model image {
   updatedAt         DateTime    @updatedAt
 
   productImage      productImage[]
+  banner            banner[]
+  homeCategory      homeCategory[]
 }
 enum OrderStatus {
   PENDING

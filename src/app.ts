@@ -14,6 +14,7 @@ import { productRouter } from "./routers/product-router";
 import { imageRouter } from "./routers/image-router";
 import { orderRouter } from "./routers/order-router";
 import { paymentRouter } from "./routers/payment-router";
+import { homePageRouter } from "./routers/homepage-router";
 
 loadEnv();
 
@@ -32,6 +33,7 @@ app
   .use("/payment", paymentRouter)
   .use("/image", imageRouter)
   .use("/order", orderRouter)
+  .use("/homepage", homePageRouter)
 
 export function init(): Promise<Express> {
   connectDb();
