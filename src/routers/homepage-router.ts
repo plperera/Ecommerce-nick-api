@@ -1,5 +1,5 @@
 
-import { createCategoryHome, createNewBanner, deleteBanner, getAllBanners, getAllCategoriesHome, updateBanner } from '@/controllers/homepage-controller'
+import { createHomeCategory, createNewBanner, deleteBanner, deleteHomeCategory, getAllBanners, getAllCategoriesHome, updateBanner } from '@/controllers/homepage-controller'
 import { authenticateAdminToken } from '@/middlewares/auth/authenticationAdmin-middlerare'
 import { Router } from 'express'
 
@@ -17,9 +17,9 @@ homePageRouter
     .delete("/banner/admin", deleteBanner)
     .put("/banner/admin", updateBanner)
     
-    .post("/category/admin", createCategoryHome)
+    .post("/category/admin", createHomeCategory)
+    .delete("/category/admin", deleteHomeCategory)
     /*
-    .delete("/category/admin", deleteCategory)
     .put("/category/admin", updateCategory)
     */
 

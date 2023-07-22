@@ -80,6 +80,21 @@ async function createHomeCategory(body: newHomeCategoryBody){
     await homePageRepository.createHomeCategory(body)   
     return 
 }
+async function verifyHomeCategoryId(homeCategoryId: number){
+
+    const result = await homePageRepository.findHomeCategoryById(homeCategoryId)
+
+    if(!result){
+        throw badRequestError("Categoria (card) não encontrada")
+    }
+   
+    return 
+}
+async function deleteHomeCategory(homeCategoryId: number){
+
+    await homePageRepository.deleteHomeCategoryById(homeCategoryId)
+    return 
+}
 
 const homePageService = {
     getAllIBannersData,
@@ -90,6 +105,8 @@ const homePageService = {
     deleteBanner,
     updateBanner,
     verifyCategory,
-    createHomeCategory
+    createHomeCategory,
+    verifyHomeCategoryId,
+    deleteHomeCategory
 }
 export default homePageService

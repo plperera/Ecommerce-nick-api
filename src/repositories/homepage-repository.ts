@@ -75,6 +75,20 @@ async function createHomeCategory(body: newHomeCategoryBody){
         }
     });
 }
+async function findHomeCategoryById(homeCategoryId: number){
+    return prisma.homeCategory.findFirst({
+        where: {
+            id: homeCategoryId
+        }
+    });
+}
+async function deleteHomeCategoryById(homeCategoryId: number){
+    return prisma.homeCategory.delete({
+        where: {
+            id: homeCategoryId
+        }
+    });
+}
 
 const homePageRepository = {
     findAllIBannersData,
@@ -83,6 +97,8 @@ const homePageRepository = {
     findBannerById,
     deleteBannerById,
     updateBanner,
-    createHomeCategory
+    createHomeCategory,
+    findHomeCategoryById,
+    deleteHomeCategoryById
 }
 export default homePageRepository
