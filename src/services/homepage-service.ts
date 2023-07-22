@@ -2,9 +2,11 @@ import { badRequestError } from "@/errors/bad-request-erros";
 import { conflictError } from "@/errors/conflict-error";
 import { forbiddenError } from "@/errors/forbidden-error";
 import { notFoundError } from "@/errors/not-found-error";
+import categoryRepository from "@/repositories/category-repository";
 import homePageRepository from "@/repositories/homepage-repository";
 import imageRepository from "@/repositories/image-repository";
 import { newHomeBannerBody } from "@/schemas/homePage/newHomeBannerSCHEMA";
+import { newHomeCategoryBody } from "@/schemas/homePage/newHomeCategorySCHEMA";
 import { putHomeBannerBody } from "@/schemas/homePage/putHomeBannerSCHEMA";
 
 async function getAllIBannersData(){
@@ -64,6 +66,20 @@ async function updateBanner(body: putHomeBannerBody){
     await homePageRepository.updateBanner(body)
     return 
 }
+async function verifyCategory(categoryId: number){
+
+    const result = await categoryRepository.findById(categoryId)
+
+    if(!result){
+        throw badRequestError("Categoria não encontrada")
+    }
+   
+    return 
+}
+async function createHomeCategory(body: newHomeCategoryBody){
+    await homePageRepository.createHomeCategory(body)   
+    return 
+}
 
 const homePageService = {
     getAllIBannersData,
@@ -72,6 +88,8 @@ const homePageService = {
     createBanner,
     verifyBannerId,
     deleteBanner,
-    updateBanner
+    updateBanner,
+    verifyCategory,
+    createHomeCategory
 }
 export default homePageService

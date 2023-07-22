@@ -1,5 +1,6 @@
 import { prisma } from "@/config";
 import { newHomeBannerBody } from "@/schemas/homePage/newHomeBannerSCHEMA";
+import { newHomeCategoryBody } from "@/schemas/homePage/newHomeCategorySCHEMA";
 import { putHomeBannerBody } from "@/schemas/homePage/putHomeBannerSCHEMA";
 
 async function findAllIBannersData(){
@@ -65,6 +66,15 @@ async function updateBanner(body: putHomeBannerBody){
         }
     });
 }
+async function createHomeCategory(body: newHomeCategoryBody){
+    return prisma.homeCategory.create({
+        data:{
+            subTitle: body.subTitle,
+            imageId: body.imageId,
+            categoryId: body.categoryId
+        }
+    });
+}
 
 const homePageRepository = {
     findAllIBannersData,
@@ -72,6 +82,7 @@ const homePageRepository = {
     createBanner,
     findBannerById,
     deleteBannerById,
-    updateBanner
+    updateBanner,
+    createHomeCategory
 }
 export default homePageRepository

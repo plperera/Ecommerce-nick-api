@@ -9,6 +9,7 @@ import homePageService from "@/services/homepage-service";
 import { newHomeBannerSCHEMA } from "@/schemas/homePage/newHomeBannerSCHEMA";
 import { deleteHomeBannerSCHEMA } from "@/schemas/homePage/deleteHomeBannerSCHEMA";
 import { putHomeBannerSCHEMA } from "@/schemas/homePage/putHomeBannerSCHEMA";
+import { newHomeCategorySCHEMA } from "@/schemas/homePage/newHomeCategorySCHEMA";
 
 export async function getAllBanners(req: Request, res: Response){
     try {        
@@ -112,18 +113,18 @@ export async function updateBanner(req: Request, res: Response){
 export async function createCategoryHome(req: Request, res: Response){
     try {       
         
-        const isValid = putHomeBannerSCHEMA.validate(req.body, {abortEarly: false})
+        const isValid = newHomeCategorySCHEMA.validate(req.body, {abortEarly: false})
 
         if(isValid.error){
             return res.sendStatus(httpStatus.BAD_REQUEST)
         }
         
-        const { bannerId, imageId, text } = req.body
-
-        await homePageService.verifyBannerId(bannerId)
+        const { subTitle, imageId, categoryId } = req.body
+ 
         await homePageService.verifyImage(imageId)
+        await homePageService.verifyCategory(categoryId)
 
-        await homePageService.updateBanner({ bannerId, imageId, text })
+        await homePageService.createHomeCategory({ subTitle, imageId, categoryId })
 
         return res.sendStatus(httpStatus.OK)
         
