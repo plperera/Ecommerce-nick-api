@@ -38,6 +38,31 @@ export type productBodyResponse = {
         topicDetail: string
     }[]
 }[]
+export type productAdminBodyResponse = {
+    id: number;
+    name: string;
+    description: string;
+    price: number;
+    stock: number,
+    productCategory: {
+        category: {
+            id: number;
+            name: string;
+        };
+    }[];
+    productImage: {
+        mainImage: boolean;
+        image: {
+            imageUrl: string;
+            imageName: string,
+            id: number
+        };
+    }[];
+    tecnicDetails: {
+        topic: string,
+        topicDetail: string
+    }[]
+}[]
 
 export type productUniqueBodyResponse = {
     productId: number;
@@ -75,6 +100,48 @@ type tecnicDetailsBody = {
     topicDetail: string
 }[]
 
+async function findAll(){
+    return prisma.product.findMany({
+        orderBy: {
+            salesAmount: 'desc'
+        },
+        select: {
+            id: true,
+            stock: true,
+            name: true,
+            description: true,
+            price: true,
+            tecnicDetails: {
+                select: {
+                    topic: true,
+                    topicDetail: true,
+                }
+            },
+            productCategory: {
+                select: {
+                    category: {
+                        select: {
+                            id: true,
+                            name: true
+                        }
+                    }
+                }
+            },
+            productImage: {
+                select: {
+                    mainImage: true,
+                    image: {
+                        select: {
+                            imageUrl: true,
+                            imageName: true,
+                            id: true,
+                        }
+                    }
+                }
+            }
+        }     
+    });
+}
 async function findAllActive(){
     return prisma.product.findMany({
         where: {
@@ -328,8 +395,7 @@ async function putProduct(body: Omit<putProductBody, "categories" | "images" | "
             name: body.name,
             description: body.description,
             price: body.price,
-            stock: body.stock,
-            salesAmount: body.salesNumber
+            stock: body.stock
         }
     });
 }
@@ -345,6 +411,7 @@ async function disableProduct(id: number){
 }
 
 const productRepository = {
+    findAll,
     findAllActive,
     findAllActiveById,
     findAllProductsActiveByCategoryId,

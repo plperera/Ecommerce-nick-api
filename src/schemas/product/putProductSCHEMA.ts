@@ -8,8 +8,7 @@ export type productBody = {
     name: string,
     description: string,
     price: number,
-    stock: number,
-    salesNumber: number
+    stock: number
 }
 
 const putProductSCHEMA = joi.object<putProductBody>({
@@ -18,7 +17,6 @@ const putProductSCHEMA = joi.object<putProductBody>({
     description: joi.string().min(10).max(1000).required(),
     price: joi.number().integer().positive().required(),
     stock: joi.number().integer().positive().required(),
-    salesNumber: joi.number().integer().required(),
     categories: joi.array().items(
         joi.object({
             categoryId: joi.number().integer().positive().required()

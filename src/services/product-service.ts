@@ -4,7 +4,7 @@ import { forbiddenError } from "@/errors/forbidden-error";
 import { notFoundError } from "@/errors/not-found-error";
 import categoryRepository from "@/repositories/category-repository";
 import imageRepository from "@/repositories/image-repository";
-import productRepository, { productBodyResponse, productCartBodyResponse, productUniqueBodyResponse } from "@/repositories/product-repository";
+import productRepository, { productAdminBodyResponse, productBodyResponse, productCartBodyResponse, productUniqueBodyResponse } from "@/repositories/product-repository";
 import { createProductBody, imagesArray } from "@/schemas/product/createProductSCHEMA";
 import { putProductBody } from "@/schemas/product/putProductSCHEMA";
 
@@ -22,6 +22,32 @@ function FormatProducts(productsArray: productBodyResponse){
         images: product.productImage.map(e => ({
           mainImage: e.mainImage,
           imageUrl: e.image.imageUrl
+        })),
+        tecnicDetails: product.tecnicDetails.map(e => ({
+            topic: e.topic,
+            topicDetail: e.topicDetail
+        }))
+    }));
+
+    return result
+}
+function FormatAdminProducts(productsArray: productAdminBodyResponse){
+
+    const result = productsArray.map(product => ({
+        productId: product.id,
+        name: product.name,
+        description: product.description,
+        price: product.price,
+        stock: product.stock,
+        categories: product.productCategory.map(e => ({
+          categoryId: e.category.id,
+          name: e.category.name
+        })),
+        images: product.productImage.map(e => ({
+          mainImage: e.mainImage,
+          imageUrl: e.image.imageUrl,
+          imageName: e.image.imageName,
+          id: e.image.id
         })),
         tecnicDetails: product.tecnicDetails.map(e => ({
             topic: e.topic,
@@ -69,6 +95,14 @@ async function getAllProductsData(){
     const formattedProducts = FormatProducts(result)  
 
     return formattedProducts
+}
+async function getAllProductsDataWithAllData(){
+
+    const result = await productRepository.findAll()
+
+    const formattedAdminProducts = FormatAdminProducts(result)  
+
+    return formattedAdminProducts
 }
 async function getAllProductsDataById(productIdArray: {productId: number}[]){
 
@@ -251,8 +285,7 @@ async function putProduct( body: putProductBody ) {
         name: body.name, 
         description: body.description, 
         price: body.price,
-        stock: body.stock,
-        salesNumber: body.salesNumber
+        stock: body.stock
     })
 }
 async function disableProduct( id: number ) {
@@ -262,6 +295,7 @@ async function disableProduct( id: number ) {
 }
 const productService = {
     getAllProductsData,
+    getAllProductsDataWithAllData,
     getAllProductsDataByCategoryId,
     getUniqueProductDataById,
     getUniqueProductDataByName,

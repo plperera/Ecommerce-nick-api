@@ -31,6 +31,27 @@ export async function getAllProducts(req: AuthenticatedRequest, res: Response){
         return res.sendStatus(httpStatus.INTERNAL_SERVER_ERROR);
     }
 }
+export async function getAllProductWithAllData(req: AuthenticatedAdminRequest, res: Response){
+    try {        
+
+        const AllProducts = await productService.getAllProductsDataWithAllData()
+
+        return res.send(AllProducts).status(httpStatus.OK)
+        
+
+    } catch (error) {
+        if(error.name === "ConflictError") {
+            return res.sendStatus(httpStatus.CONFLICT);
+        }
+        if (error.name === "BadRequestError") {
+            return res.status(httpStatus.BAD_REQUEST).send(error);
+        }
+        if (error.name === "ForbiddenError") {
+            return res.status(httpStatus.FORBIDDEN).send(error);
+        }
+        return res.sendStatus(httpStatus.INTERNAL_SERVER_ERROR);
+    }
+}
 export async function getAllProductsById(req: Request, res: Response){
     try {    
 
