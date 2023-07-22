@@ -11,6 +11,7 @@ import { deleteHomeBannerSCHEMA } from "@/schemas/homePage/deleteHomeBannerSCHEM
 import { putHomeBannerSCHEMA } from "@/schemas/homePage/putHomeBannerSCHEMA";
 import { newHomeCategorySCHEMA } from "@/schemas/homePage/newHomeCategorySCHEMA";
 import { deleteHomeCategorySCHEMA } from "@/schemas/homePage/deleteHomeCategorySCHEMA";
+import { putHomeCategorySCHEMA } from "@/schemas/homePage/putHomeCategorySCHEMA";
 
 export async function getAllBanners(req: Request, res: Response){
     try {        
@@ -127,7 +128,7 @@ export async function createHomeCategory(req: AuthenticatedAdminRequest, res: Re
 
         await homePageService.createHomeCategory({ subTitle, imageId, categoryId })
 
-        return res.sendStatus(httpStatus.OK)
+        return res.sendStatus(httpStatus.CREATED)
         
 
     } catch (error) {
@@ -151,7 +152,34 @@ export async function deleteHomeCategory(req: AuthenticatedAdminRequest, res: Re
 
         await homePageService.deleteHomeCategory(homeCategoryId)
 
-        return res.sendStatus(httpStatus.CREATED)
+        return res.sendStatus(httpStatus.OK)
+        
+
+    } catch (error) {
+        if (error.name === "BadRequestError") {
+            return res.status(httpStatus.BAD_REQUEST).send(error);
+        }
+        return res.sendStatus(httpStatus.INTERNAL_SERVER_ERROR);
+    }
+}
+export async function updateHomeCategory(req: AuthenticatedAdminRequest, res: Response){
+    try {       
+        
+        const isValid = putHomeCategorySCHEMA.validate(req.body, {abortEarly: false})
+
+        if(isValid.error){
+            return res.sendStatus(httpStatus.BAD_REQUEST)
+        }
+        
+        const { homeCategoryId, imageId, categoryId, subTitle } = req.body
+
+        await homePageService.verifyHomeCategoryId(homeCategoryId)
+        await homePageService.verifyImage(imageId)
+        await homePageService.verifyCategory(categoryId)
+
+        await homePageService.updateHomeCategory({ homeCategoryId, imageId, categoryId, subTitle })
+
+        return res.sendStatus(httpStatus.OK)
         
 
     } catch (error) {

@@ -8,6 +8,7 @@ import imageRepository from "@/repositories/image-repository";
 import { newHomeBannerBody } from "@/schemas/homePage/newHomeBannerSCHEMA";
 import { newHomeCategoryBody } from "@/schemas/homePage/newHomeCategorySCHEMA";
 import { putHomeBannerBody } from "@/schemas/homePage/putHomeBannerSCHEMA";
+import { putHomeCategoryBody } from "@/schemas/homePage/putHomeCategorySCHEMA";
 
 async function getAllIBannersData(){
     const result = await homePageRepository.findAllIBannersData()
@@ -95,6 +96,12 @@ async function deleteHomeCategory(homeCategoryId: number){
     await homePageRepository.deleteHomeCategoryById(homeCategoryId)
     return 
 }
+async function updateHomeCategory(body: putHomeCategoryBody){
+
+    await homePageRepository.updateHomeCategory(body)
+    return 
+}
+
 
 const homePageService = {
     getAllIBannersData,
@@ -107,6 +114,7 @@ const homePageService = {
     verifyCategory,
     createHomeCategory,
     verifyHomeCategoryId,
-    deleteHomeCategory
+    deleteHomeCategory,
+    updateHomeCategory
 }
 export default homePageService

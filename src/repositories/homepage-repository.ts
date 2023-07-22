@@ -2,6 +2,7 @@ import { prisma } from "@/config";
 import { newHomeBannerBody } from "@/schemas/homePage/newHomeBannerSCHEMA";
 import { newHomeCategoryBody } from "@/schemas/homePage/newHomeCategorySCHEMA";
 import { putHomeBannerBody } from "@/schemas/homePage/putHomeBannerSCHEMA";
+import { putHomeCategoryBody } from "@/schemas/homePage/putHomeCategorySCHEMA";
 
 async function findAllIBannersData(){
     return prisma.banner.findMany({
@@ -89,6 +90,19 @@ async function deleteHomeCategoryById(homeCategoryId: number){
         }
     });
 }
+async function updateHomeCategory(body: putHomeCategoryBody){
+    return prisma.homeCategory.update({
+        where: {
+            id: body.homeCategoryId
+        },
+        data: {
+            imageId: body.imageId,
+            categoryId: body.categoryId,
+            subTitle: body.subTitle
+        }
+    });
+}
+
 
 const homePageRepository = {
     findAllIBannersData,
@@ -99,6 +113,7 @@ const homePageRepository = {
     updateBanner,
     createHomeCategory,
     findHomeCategoryById,
-    deleteHomeCategoryById
+    deleteHomeCategoryById,
+    updateHomeCategory
 }
 export default homePageRepository
