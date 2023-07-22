@@ -1,4 +1,3 @@
-
 import { createHomeCategory, createNewBanner, deleteBanner, deleteHomeCategory, getAllBanners, getAllCategoriesHome, updateBanner, updateHomeCategory } from '@/controllers/homepage-controller'
 import { authenticateAdminToken } from '@/middlewares/auth/authenticationAdmin-middlerare'
 import { Router } from 'express'
@@ -10,7 +9,6 @@ homePageRouter
     .get("/banners", getAllBanners)
     .get("/category", getAllCategoriesHome)
 
-    
     .all("/*", authenticateAdminToken)
 
     .post("/banner/admin", createNewBanner)

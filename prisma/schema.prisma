@@ -77,11 +77,12 @@ model user {
   createdAt DateTime    @default(now())
   updatedAt DateTime    @updatedAt
 
-  session       session[]
-  enrollment    enrollment[]
-  address       address[]
-  order         order[]
-  payment      payment[]
+  session               session[]
+  enrollment            enrollment[]
+  address               address[]
+  order                 order[]
+  payment               payment[]
+  productFavorite       productFavorite[]
 }
 
 model userAdmin {
@@ -110,6 +111,15 @@ model product {
   productCategory   productCategory[]
   productImage      productImage[]
   orderProduct      orderProduct[]
+  productFavorite   productFavorite[]
+}
+model productFavorite {
+  id                Int          @id @default(autoincrement())
+  productId         Int
+  userId            Int
+
+  product           product?     @relation(fields: [productId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  user              user?    @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 model productCategory {
   id                Int          @id @default(autoincrement())
