@@ -1,5 +1,6 @@
 import { prisma } from "@/config";
 import { newHomeBannerBody } from "@/schemas/homePage/newHomeBannerSCHEMA";
+import { putHomeBannerBody } from "@/schemas/homePage/putHomeBannerSCHEMA";
 
 async function findAllIBannersData(){
     return prisma.banner.findMany({
@@ -53,12 +54,24 @@ async function deleteBannerById(bannerId: number){
         }
     });
 }
+async function updateBanner(body: putHomeBannerBody){
+    return prisma.banner.update({
+        where: {
+            id: body.bannerId
+        },
+        data: {
+            imageId: body.imageId,
+            text: body.text
+        }
+    });
+}
+
 const homePageRepository = {
     findAllIBannersData,
     findAllCategoriesHomeData,
     createBanner,
     findBannerById,
-    deleteBannerById
+    deleteBannerById,
+    updateBanner
 }
-
 export default homePageRepository

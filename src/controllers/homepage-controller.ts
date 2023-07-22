@@ -8,6 +8,7 @@ import { format } from "date-fns";
 import homePageService from "@/services/homepage-service";
 import { newHomeBannerSCHEMA } from "@/schemas/homePage/newHomeBannerSCHEMA";
 import { deleteHomeBannerSCHEMA } from "@/schemas/homePage/deleteHomeBannerSCHEMA";
+import { putHomeBannerSCHEMA } from "@/schemas/homePage/putHomeBannerSCHEMA";
 
 export async function getAllBanners(req: Request, res: Response){
     try {        
@@ -51,6 +52,9 @@ export async function createNewBanner(req: Request, res: Response){
         
 
     } catch (error) {
+        if (error.name === "BadRequestError") {
+            return res.status(httpStatus.BAD_REQUEST).send(error);
+        }
         return res.sendStatus(httpStatus.INTERNAL_SERVER_ERROR);
     }
 }
@@ -62,7 +66,7 @@ export async function deleteBanner(req: Request, res: Response){
         if(isValid.error){
             return res.sendStatus(httpStatus.BAD_REQUEST)
         }
-        
+
         const { bannerId } = req.body
 
         await homePageService.verifyBannerId(bannerId)
@@ -73,6 +77,61 @@ export async function deleteBanner(req: Request, res: Response){
         
 
     } catch (error) {
+        if (error.name === "BadRequestError") {
+            return res.status(httpStatus.BAD_REQUEST).send(error);
+        }
+        return res.sendStatus(httpStatus.INTERNAL_SERVER_ERROR);
+    }
+}
+export async function updateBanner(req: Request, res: Response){
+    try {       
+        
+        const isValid = putHomeBannerSCHEMA.validate(req.body, {abortEarly: false})
+
+        if(isValid.error){
+            return res.sendStatus(httpStatus.BAD_REQUEST)
+        }
+        
+        const { bannerId, imageId, text } = req.body
+
+        await homePageService.verifyBannerId(bannerId)
+        await homePageService.verifyImage(imageId)
+
+        await homePageService.updateBanner({ bannerId, imageId, text })
+
+        return res.sendStatus(httpStatus.OK)
+        
+
+    } catch (error) {
+        if (error.name === "BadRequestError") {
+            return res.status(httpStatus.BAD_REQUEST).send(error);
+        }
+        return res.sendStatus(httpStatus.INTERNAL_SERVER_ERROR);
+    }
+}
+export async function createCategoryHome(req: Request, res: Response){
+    try {       
+        
+        const isValid = putHomeBannerSCHEMA.validate(req.body, {abortEarly: false})
+
+        if(isValid.error){
+            return res.sendStatus(httpStatus.BAD_REQUEST)
+        }
+        
+        const { bannerId, imageId, text } = req.body
+
+        await homePageService.verifyBannerId(bannerId)
+        await homePageService.verifyImage(imageId)
+
+        await homePageService.updateBanner({ bannerId, imageId, text })
+
+        return res.sendStatus(httpStatus.OK)
+        
+
+    } catch (error) {
+        if (error.name === "BadRequestError") {
+            return res.status(httpStatus.BAD_REQUEST).send(error);
+        }
         return res.sendStatus(httpStatus.INTERNAL_SERVER_ERROR);
     }
 }

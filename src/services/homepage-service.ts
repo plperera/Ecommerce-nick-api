@@ -5,6 +5,7 @@ import { notFoundError } from "@/errors/not-found-error";
 import homePageRepository from "@/repositories/homepage-repository";
 import imageRepository from "@/repositories/image-repository";
 import { newHomeBannerBody } from "@/schemas/homePage/newHomeBannerSCHEMA";
+import { putHomeBannerBody } from "@/schemas/homePage/putHomeBannerSCHEMA";
 
 async function getAllIBannersData(){
     const result = await homePageRepository.findAllIBannersData()
@@ -59,13 +60,18 @@ async function deleteBanner(bannerId: number){
     await homePageRepository.deleteBannerById(bannerId)
     return 
 }
+async function updateBanner(body: putHomeBannerBody){
+    await homePageRepository.updateBanner(body)
+    return 
+}
+
 const homePageService = {
     getAllIBannersData,
     getAllCategoriesHomeData,
     verifyImage,
     createBanner,
     verifyBannerId,
-    deleteBanner
+    deleteBanner,
+    updateBanner
 }
-
 export default homePageService

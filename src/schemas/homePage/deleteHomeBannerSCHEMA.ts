@@ -1,7 +1,7 @@
 import joi from "joi"
 
 export type deleteHomeBannerBody = {
-    bannerId: string,
+    bannerId: number,
 }
 
 const deleteHomeBannerSCHEMA = joi.object<deleteHomeBannerBody>({
