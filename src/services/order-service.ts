@@ -9,8 +9,7 @@ import imageRepository from "@/repositories/image-repository";
 import orderRepository from "@/repositories/order-repository";
 import productRepository, { productBodyResponse, productUniqueBodyResponse } from "@/repositories/product-repository";
 import shippingRepository from "@/repositories/shipping-repository";
-import { createOrderBody, createOrderProduct } from "@/schemas/order/createProductSCHEMA";
-import { createProductBody, imagesArray } from "@/schemas/product/createProductSCHEMA";
+import { newOrderBody, orderBody, orderCartBody, verifyValuesBody } from "@/schemas/order/newOrderSCHEMA";
 
 
 async function getAllOrdersDataByUser(userId: number){
@@ -51,8 +50,8 @@ async function verifyAddress({ userId, addressId}: { userId: number, addressId: 
 
     return
 }
-async function verifyShipping(methodId: number){
-    const shippingResponse = await shippingRepository.findById(methodId)
+async function verifyShipping(shippingId: number){
+    const shippingResponse = await shippingRepository.findById(shippingId)
     
     if (!shippingResponse){
         throw notFoundError("Método de entrega inválido")
@@ -60,27 +59,51 @@ async function verifyShipping(methodId: number){
     
     return
 }
-async function verifyProducts(products: createOrderProduct[]){
-    products.map( async e => {
-
-        const productResponse = await productRepository.findProductById(e.productId)
+async function verifyCart(cartProducts: orderCartBody){
     
-        if (!productResponse){
-            throw notFoundError("Produto inválido")
-        }
+    const productsArrayResponse = await productRepository.findAllActiveById(cartProducts.map(e => { 
+        return {productId: e.productId}
+    }))
 
-        if (!productResponse.isActive){
-            throw notFoundError("Produto indisponivel")
-        }
+    if (productsArrayResponse.length !== cartProducts.length){
+        throw badRequestError("O produto que esta sendo comprado é inválido")
+    }
 
-    })
-    return
+    return productsArrayResponse
 }
-async function createNewOrder({body, userId}: {body: createOrderBody, userId: number}){
+function verifyValues({products, cart, shippingValue, transaction_amount}: verifyValuesBody){
 
-    const totalPrice = body.products.reduce((sum, product) => {
-        return sum + product.amount;
-    }, 0);
+    const hashPrice: Record<string, number> = {} 
+    let totalAmount: number = 0
+
+    products.forEach(e => {
+
+        if(e.price === 0){
+            throw badRequestError("Itens de orçamento não podem ser comprados pelo checkout")
+        }
+
+        hashPrice[`productId_${e.id}`] = e.price;
+
+    });
+
+    cart.forEach(e => {
+
+        totalAmount += hashPrice[`productId_${e.productId}`] * e.quantity;
+        
+    });
+
+    totalAmount += shippingValue
+
+    if (transaction_amount !== totalAmount){
+        throw badRequestError("O valor da transação não é o mesmo do preço total do carrinho")
+    }
+    
+    return   
+}
+
+async function createNewOrder({body, userId, paymentId}: {body: newOrderBody, userId: number, paymentId: number}){
+
+    /*
 
     const paymentId = 1
 
@@ -94,15 +117,17 @@ async function createNewOrder({body, userId}: {body: createOrderBody, userId: nu
     }));
     
     await orderRepository.createManyOrderProducts(newCategoryArray)
-    
+    */
     return
 }
+
 const orderService = {
     getAllOrdersDataByUser,
     createNewOrder,
     verifyAddress,
     verifyShipping,
-    verifyProducts
+    verifyCart,
+    verifyValues
 }
 
 export default orderService

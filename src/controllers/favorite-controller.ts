@@ -32,7 +32,7 @@ export async function NewFavoriteProduct(req: AuthenticatedRequest, res: Respons
         const { productId } = req.body
 
         await favoriteService.verifyProductId(productId)
-        await favoriteService.verifyNotHasFavoriteProductId({userId, productId})
+        await favoriteService.verifyHasFavoriteProductId({userId, productId})
 
         await favoriteService.createNewFavoriteProduct({productId, userId})
 
@@ -46,6 +46,7 @@ export async function NewFavoriteProduct(req: AuthenticatedRequest, res: Respons
         if (error.name === "ConflictError") {
             return res.status(httpStatus.CONFLICT).send(error);
         }
+        console.log(error)
         return res.sendStatus(httpStatus.INTERNAL_SERVER_ERROR);
     }
 }
@@ -62,11 +63,11 @@ export async function RemoveFavoriteProduct(req: AuthenticatedRequest, res: Resp
         const { productId } = req.body
 
         await favoriteService.verifyProductId(productId)
-        const favoriteResponse = await favoriteService.verifyHasFavoriteProductId({userId, productId})
+        const favoriteResponse = await favoriteService.verifyNotHasFavoriteProductId({userId, productId})
 
         await favoriteService.removeFavoriteProduct(favoriteResponse.id)
 
-        return res.sendStatus(httpStatus.CREATED)
+        return res.sendStatus(httpStatus.OK)
         
 
     } catch (error) {

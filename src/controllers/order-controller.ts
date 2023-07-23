@@ -2,14 +2,9 @@ import { Request, Response } from "express";
 import httpStatus from "http-status";
 import { AuthenticatedRequest } from "@/middlewares/auth/authentication-middlerare";
 import { AuthenticatedAdminRequest } from "@/middlewares/auth/authenticationAdmin-middlerare";
-import productService from "@/services/product-service";
-import { getProductByCategorySCHEMA } from "@/schemas/product/getProductByCategorySCHEMA";
-import { getUniqueProductSCHEMA } from "@/schemas/product/getUniqueProductSCHEMA";
-import { createProductSCHEMA } from "@/schemas/product/createProductSCHEMA";
-import { putProductSCHEMA } from "@/schemas/product/putProductSCHEMA";
-import { disableProductSCHEMA } from "@/schemas/product/deleteProductSCHEMA";
 import orderService from "@/services/order-service";
-import { createOrderSCHEMA } from "@/schemas/order/createProductSCHEMA";
+import { newOrderBody, newOrderSCHEMA } from "@/schemas/order/newOrderSCHEMA";
+
 
 export async function getAllUserOrders(req: AuthenticatedRequest, res: Response){
     try {        
@@ -34,24 +29,33 @@ export async function getAllUserOrders(req: AuthenticatedRequest, res: Response)
         return res.sendStatus(httpStatus.INTERNAL_SERVER_ERROR);
     }
 }
+
 export async function createNewOrder(req: AuthenticatedRequest, res: Response){
     try {        
 
-        const isValid = createOrderSCHEMA.validate(req.body, {abortEarly: false})
+        
+        const isValid = newOrderSCHEMA.validate(req.body, {abortEarly: false})
 
         if(isValid.error){
             return res.sendStatus(httpStatus.BAD_REQUEST)
         }
-
-        const { addressId, methodId, shippingPrice, products} = req.body
+        
+        const { addressId, shippingId, shippingValue, transaction_amount, cart }: newOrderBody = req.body
         const { userId } = req
 
 
         await orderService.verifyAddress({ userId, addressId})
-        await orderService.verifyShipping(methodId)
-        await orderService.verifyProducts(products)
 
-        await orderService.createNewOrder({body: req.body, userId})
+        await orderService.verifyShipping(shippingId)
+
+        const products = await orderService.verifyCart(cart)
+
+        orderService.verifyValues({products, cart, shippingValue, transaction_amount})
+
+    
+        //lançar pagamento
+
+        //await orderService.createNewOrder({body: req.body, userId, paymentId})
 
         return res.sendStatus(httpStatus.CREATED)
         

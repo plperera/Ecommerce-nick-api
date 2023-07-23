@@ -1,5 +1,6 @@
 dist
 node_modules
+src/old
 .env*
 !.env.example
 yarn.lock

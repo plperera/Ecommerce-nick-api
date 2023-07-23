@@ -5,7 +5,7 @@ import httpStatus from 'http-status';
 export async function handlePayment(req: Request, res: Response) {
 
     const paymentData = req.body;
-
+    
     if (!paymentData) {
         res.send("Body vazio").status(httpStatus.BAD_REQUEST)
     }

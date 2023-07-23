@@ -56,7 +56,7 @@ async function verifyHasFavoriteProductId({userId, productId}:{userId: number, p
         throw conflictError("O Produto ja foi favoritado pelo usuario")
     }
 
-    return result
+    return 
 }
 async function verifyNotHasFavoriteProductId({userId, productId}:{userId: number, productId: number}){
     const result = await favoriteRepository.findFavoriteByProductIdAndUserId({userId, productId})
@@ -65,7 +65,7 @@ async function verifyNotHasFavoriteProductId({userId, productId}:{userId: number
         throw notFoundError("O Produto não foi encontrado nos favoritos do usuario")
     }
 
-    return
+    return result
 }
 async function createNewFavoriteProduct({userId, productId}:{userId: number, productId: number}){
     await favoriteRepository.createNewFavorite({userId, productId})

@@ -27,7 +27,8 @@ async function findByName(name: string){
 async function findById(id: number){
     return prisma.shipping.findFirst({
         where: {
-            id: id
+            id: id,
+            isActive: true
         }
     });
 }
