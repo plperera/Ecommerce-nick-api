@@ -3,6 +3,7 @@ import joi from "joi"
 export type newOrderBody = paymentBody & orderBody
 
 export type paymentBody = {
+    description: string,
     installments: number,
     issuer_id: string,
     payment_method_id: string,
@@ -11,7 +12,8 @@ export type paymentBody = {
     payer: {
         email: string,
         identification: {
-            number: string
+            number: string,
+            type: string
         }
     }
 }
@@ -46,6 +48,7 @@ export type verifyValuesBody = {
 
 const newOrderSCHEMA = joi.object<newOrderBody>({
 
+    description: joi.string().required(),
     installments: joi.number().integer().positive().required(),
     issuer_id: joi.string().required(),
     payment_method_id: joi.string().required(),
@@ -66,7 +69,8 @@ const newOrderSCHEMA = joi.object<newOrderBody>({
     payer: joi.object({
         email: joi.string().email().required(),
         identification: joi.object({
-            number: joi.string().required()
+            number: joi.string().required(),
+            type: joi.string().required()
         }).required()
     })
 });
