@@ -46,6 +46,50 @@ export type verifyValuesBody = {
     transaction_amount: number
 }
 
+export type savePaymentBody = {
+    paymentType: string,
+    installments: number,
+    transactionAmount: number,
+    expirationMonth: number,
+    expirationYear: number,
+    firstSixDigits: string,
+    lastFourDigits: string,
+    
+    payerDocumentNumber: string,
+    payerDocumentType: string,
+    payerEmail: string,
+
+    paymentId: number,
+    issuerId: string,
+    paymentStatus: string,
+    paymentStatusDetails: string,
+    
+    idempotency: string,
+}
+export type createNewOrderAndOrderProducts = {
+    body: newOrderBody,
+    userId: number,
+    paymentId: number,
+    products: {
+        id: number;
+        name: string;
+        description: string;
+        price: number;
+        productImage: {
+            mainImage: boolean;
+            image: {
+                imageUrl: string;
+            };
+        }[];
+    }[]
+}
+        
+export type formatedProductsBody = {
+    productId: number,
+    orderId: number,
+    price: number,
+    quantity: number
+}[]
 const newOrderSCHEMA = joi.object<newOrderBody>({
 
     description: joi.string().required(),

@@ -3,7 +3,7 @@ import httpStatus from "http-status";
 import { AuthenticatedRequest } from "@/middlewares/auth/authentication-middlerare";
 import { AuthenticatedAdminRequest } from "@/middlewares/auth/authenticationAdmin-middlerare";
 import orderService from "@/services/order-service";
-import { newOrderBody, newOrderSCHEMA } from "@/schemas/order/newOrderSCHEMA";
+import { newOrderBody, newOrderSCHEMA, savePaymentBody } from "@/schemas/order/newOrderSCHEMA";
 import paymentService from "@/services/payments-service";
 
 
@@ -49,17 +49,16 @@ export async function createNewOrder(req: AuthenticatedRequest, res: Response){
         const { addressId, shippingId, shippingValue, cart }: newOrderBody = req.body
         const { userId } = req
 
-
-
         await orderService.verifyAddress({ userId, addressId})
-        //await orderService.verifyShipping(shippingId)
         const products = await orderService.verifyCart(cart)
         orderService.verifyValues({products, cart, shippingValue, transaction_amount})
+        await orderService.verifyShipping({shippingValue, shippingId})
 
-        const paymentResponse = await paymentService.createPayment(paymentBody)
-        //await orderService.createNewOrder({body: req.body, userId, paymentId})
-
-        return res.status(httpStatus.CREATED).send(paymentResponse)
+        const paymentId = await paymentService.savePayment({paymentData: paymentBody, userId})
+        
+        await orderService.createNewOrder({body: req.body, userId, paymentId: paymentId, products: products})
+        
+        return res.sendStatus(httpStatus.CREATED)
         
 
     } catch (error) {

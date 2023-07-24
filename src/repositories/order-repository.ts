@@ -1,18 +1,13 @@
 import { prisma } from "@/config";
 import { newCategoryBody } from "@/schemas/category/newCategorySCHEMA";
 import { putCategoryBody } from "@/schemas/category/putCategorySCHEMA";
+import { formatedProductsBody } from "@/schemas/order/newOrderSCHEMA";
 import { categoriesArray, productBody } from "@/schemas/product/createProductSCHEMA";
 import { putProductBody } from "@/schemas/product/putProductSCHEMA";
 import { payment } from "mercadopago";
 
 
-type ProductBody = {
-    orderId: number,
-    productId: number,
-    quantity: number,
-    price: number
-};
-
+/*
 async function findAllOrderByUser( userId: number ){
     return prisma.order.findMany({
         where: {
@@ -53,7 +48,7 @@ async function findAllOrderByUser( userId: number ){
         }
     })
 }
-/*
+
 async function createNewOrder({body, userId, totalPrice, paymentId}: {body: createOrderBody, userId: number, totalPrice: number, paymentId: number}){
     return prisma.order.create({
         data: {
@@ -67,7 +62,18 @@ async function createNewOrder({body, userId, totalPrice, paymentId}: {body: crea
 
 }
 */
-async function createManyOrderProducts( productArray: ProductBody[] ){
+async function createOrder( {userId, addressId, shippingId, paymentId}: {userId: number, addressId: number, shippingId: number, paymentId: number} ){
+  return prisma.order.create({
+    data: {
+      userId: userId,
+      addressId: addressId,
+      shippingId: shippingId,
+      paymentId: paymentId
+    }
+  })
+
+}
+async function createManyOrderProducts( productArray: formatedProductsBody ){
     return prisma.orderProduct.createMany({
         data: productArray
     })
@@ -75,9 +81,8 @@ async function createManyOrderProducts( productArray: ProductBody[] ){
 }
 
 const orderRepository = {
-    findAllOrderByUser,
-    //createNewOrder,
-    createManyOrderProducts
+  createOrder,
+  createManyOrderProducts
 }
 
 export default orderRepository

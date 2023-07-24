@@ -199,29 +199,39 @@ model order {
   addressId         Int      
   shippingId        Int         
   paymentId         Int         
-  status            OrderStatus     @default(PENDING)
-  totalPrice        Int             @default(0)
   createdAt         DateTime        @default(now())
   updatedAt         DateTime        @updatedAt
+
+  orderProduct      orderProduct[]
 
   user              user?           @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   address           address?        @relation(fields: [addressId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   shipping          shipping?       @relation(fields: [shippingId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   payment           payment?        @relation(fields: [paymentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-
-  orderProduct      orderProduct[]
 }
 model payment {
-  id                Int             @id @default(autoincrement())
-  userId            Int      
-  amount            Int      
-  status            Int      
-  createdAt         DateTime        @default(now())
-  updatedAt         DateTime        @updatedAt
+  id                      Int             @id @default(autoincrement())
+  userId                  Int
+  paymentType             String
+  installments            Int
+  transactionAmount       Int
+  expirationMonth         Int
+  expirationYear          Int
+  firstSixDigits          String
+  lastFourDigits          String
+  payerDocumentNumber     String
+  payerDocumentType       String
+  payerEmail              String
+  paymentId               Int
+  issuerId                String
+  paymentStatus           String
+  paymentStatusDetails    String
+  idempotency             String
+  createdAt               DateTime        @default(now())
+  updatedAt               DateTime        @updatedAt
 
-  user              user?           @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-
-  order             order[]
+  order                   order[]
+  user                    user?           @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction) 
 }
 model orderProduct {
   id                Int         @id @default(autoincrement())

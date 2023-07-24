@@ -9,13 +9,13 @@ import imageRepository from "@/repositories/image-repository";
 import orderRepository from "@/repositories/order-repository";
 import productRepository, { productBodyResponse, productUniqueBodyResponse } from "@/repositories/product-repository";
 import shippingRepository from "@/repositories/shipping-repository";
-import { newOrderBody, orderBody, orderCartBody, verifyValuesBody } from "@/schemas/order/newOrderSCHEMA";
+import { createNewOrderAndOrderProducts, newOrderBody, orderBody, orderCartBody, verifyValuesBody } from "@/schemas/order/newOrderSCHEMA";
 
 
 async function getAllOrdersDataByUser(userId: number){
-
+/*
     const result = await orderRepository.findAllOrderByUser(userId)
-
+    
     const formattedOrders = result.map((order) => ({
         address: {
           cep: order.address.cep,
@@ -37,8 +37,9 @@ async function getAllOrdersDataByUser(userId: number){
         totalPrice: order.totalPrice,
         shippingPrice: order.shipping.price,
     }));
+    */
+   // return result
 
-    return formattedOrders
 }
 async function verifyAddress({ userId, addressId}: { userId: number, addressId: number}){
 
@@ -50,10 +51,10 @@ async function verifyAddress({ userId, addressId}: { userId: number, addressId: 
 
     return
 }
-async function verifyShipping(shippingId: number){
+async function verifyShipping({shippingId, shippingValue}: {shippingId: number, shippingValue:number}){
     const shippingResponse = await shippingRepository.findById(shippingId)
     
-    if (!shippingResponse){
+    if (!shippingResponse || shippingResponse?.price !== shippingValue){
         throw notFoundError("Método de entrega inválido")
     }
     
@@ -100,24 +101,28 @@ function verifyValues({products, cart, shippingValue, transaction_amount}: verif
     
     return   
 }
+async function createNewOrder(createNewOrderAndOrderProducts: createNewOrderAndOrderProducts){
 
-async function createNewOrder({body, userId, paymentId}: {body: newOrderBody, userId: number, paymentId: number}){
-
-    /*
-
-    const paymentId = 1
-
-    const newOrder = await orderRepository.createNewOrder({body, userId, totalPrice, paymentId})
-
-    const newCategoryArray = body.products.map(e => ({      
-        orderId: newOrder.id,
-        productId: e.productId,
-        quantity: e.amount,
-        price: e.price
-    }));
+    const newOrder = await orderRepository.createOrder({
+        userId: createNewOrderAndOrderProducts.userId, 
+        addressId: createNewOrderAndOrderProducts.body.addressId, 
+        shippingId: createNewOrderAndOrderProducts.body.shippingId, 
+        paymentId: createNewOrderAndOrderProducts.paymentId
+    })
     
-    await orderRepository.createManyOrderProducts(newCategoryArray)
-    */
+    const hashProduct: any = {} 
+    const formatedProducts: any = []
+
+    createNewOrderAndOrderProducts.products.forEach(e => {
+        hashProduct[`productId_${e.id}`] = {price: e.price, productId: e.id, orderId: newOrder.id};
+    });
+
+    createNewOrderAndOrderProducts.body.cart.forEach(e => {
+        formatedProducts.push({...hashProduct[`productId_${e.productId}`], quantity: e.quantity})
+    });
+
+    await orderRepository.createManyOrderProducts(formatedProducts)
+
     return
 }
 
