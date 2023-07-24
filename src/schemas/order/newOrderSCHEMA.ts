@@ -101,7 +101,7 @@ const newOrderSCHEMA = joi.object<newOrderBody>({
 
     addressId: joi.number().integer().positive().required(),
     shippingId: joi.number().integer().positive().required(),
-    shippingValue: joi.number().integer().positive().required(),
+    shippingValue: joi.number().integer().required(),
 
     cart: joi.array().items(
         joi.object({

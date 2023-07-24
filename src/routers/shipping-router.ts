@@ -7,7 +7,7 @@ const shippingRouter = Router()
 
 shippingRouter
     
-    .get("", authenticateToken, getAllShippingMethods)
+    .get("", getAllShippingMethods)
 
     .all("/*", authenticateAdminToken)
     .post("/admin", createShippingMethod)
