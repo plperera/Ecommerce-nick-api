@@ -15,7 +15,7 @@ const putProductSCHEMA = joi.object<putProductBody>({
     id: joi.number().integer().positive().required(),
     name: joi.string().min(3).max(100).required(),
     description: joi.string().min(10).max(1000).required(),
-    price: joi.number().integer().positive().required(),
+    price: joi.number().integer().min(0).required(),
     stock: joi.number().integer().positive().required(),
 
     tecnicDetails: joi.array().items(

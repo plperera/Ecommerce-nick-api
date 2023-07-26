@@ -56,7 +56,6 @@ export async function getAllProductsById(req: Request, res: Response){
     try {    
 
         const stringArray: string[] = JSON.parse(decodeURIComponent(req.params.productIdArray));
-
         const productIdArray: {productId: number}[] = stringArray.map(e => ({productId: Number(e)}))
 
         for (let i = 0; i < productIdArray.length; i++) {

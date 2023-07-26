@@ -9,7 +9,6 @@ export async function getEnrollment(req: AuthenticatedRequest, res: Response){
         const { userId } = req
 
         const enrollmentData = await enrollmentService.getEnrollmentByUserId( userId )
-
         return res.send(enrollmentData).status(httpStatus.OK)
         
 

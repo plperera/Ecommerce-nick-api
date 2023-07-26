@@ -8,7 +8,7 @@ export type enrollmentBody = {
 
 const enrollmentSCHEMA = joi.object<enrollmentBody>({
 
-    cpf: joi.string().required().min(12),
+    cpf: joi.string().required().min(11),
     birthday: joi.string().required(),
     phone: joi.string().required().min(10)
 
