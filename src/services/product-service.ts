@@ -35,6 +35,7 @@ function FormatAdminProducts(productsArray: productAdminBodyResponse){
 
     const result = productsArray.map(product => ({
         productId: product.id,
+        isActive: product.isActive,
         name: product.name,
         description: product.description,
         price: product.price,
@@ -293,6 +294,11 @@ async function disableProduct( id: number ) {
     productRepository.disableProduct(id)
     return
 }
+async function enableProduct( id: number ) {
+
+    productRepository.enableProduct(id)
+    return
+}
 const productService = {
     getAllProductsData,
     getAllProductsDataWithAllData,
@@ -305,7 +311,8 @@ const productService = {
     verifyNameBelongsId,
     createProduct,
     putProduct,
-    disableProduct
+    disableProduct,
+    enableProduct
 }
 
 export default productService

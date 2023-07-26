@@ -7,48 +7,48 @@ import { putProductBody } from "@/schemas/product/putProductSCHEMA";
 import { payment } from "mercadopago";
 
 
-/*
-async function findAllOrderByUser( userId: number ){
-    return prisma.order.findMany({
-        where: {
-            userId: userId,
-        },
-        select: {
-            address: {
-                select: {
-                cep: true,
-                street: true,
-                city: true,
-                state: true,
-                number: true,
-                neighborhood: true,
-                addressDetail: true,
-                },
-            },
-            shipping: {
-              select: {
-                name: true,
-                price: true,
-              },
-            },
-            orderProduct: {
-              select: {
-                product: {
-                  select: {
-                    id: true,
-                    name: true,
-                    price: true,
-                  },
-                },
-                quantity: true,
-              },
-            },
-            status: true,
-            totalPrice: true,
-        }
-    })
-}
 
+async function findAllOrderByUser( userId: number ){
+  return prisma.user.findUnique({
+    where: {
+      id: userId,
+    },
+    include: {
+      session: true,
+      enrollment: true,
+      address: true,
+      order: {
+        include: {
+          orderProduct: {
+            include: {
+              product: {
+                include: {
+                  productCategory: true,
+                  productImage: true
+                }
+              }
+            }
+          },
+          address: true,
+          shipping: true,
+          payment: true
+        }
+      },
+      payment: true,
+      productFavorite: {
+        include: {
+          product: {
+            include: {
+              productCategory: true,
+              productImage: true
+            }
+          }
+        }
+      }
+    }
+  })
+}
+/*
 async function createNewOrder({body, userId, totalPrice, paymentId}: {body: createOrderBody, userId: number, totalPrice: number, paymentId: number}){
     return prisma.order.create({
         data: {
@@ -82,7 +82,8 @@ async function createManyOrderProducts( productArray: formatedProductsBody ){
 
 const orderRepository = {
   createOrder,
-  createManyOrderProducts
+  createManyOrderProducts,
+  findAllOrderByUser
 }
 
 export default orderRepository

@@ -13,32 +13,10 @@ import { createNewOrderAndOrderProducts, newOrderBody, orderBody, orderCartBody,
 
 
 async function getAllOrdersDataByUser(userId: number){
-/*
+
     const result = await orderRepository.findAllOrderByUser(userId)
-    
-    const formattedOrders = result.map((order) => ({
-        address: {
-          cep: order.address.cep,
-          street: order.address.street,
-          city: order.address.city,
-          state: order.address.state,
-          number: order.address.number,
-          neighborhood: order.address.neighborhood,
-          addressDetail: order.address.addressDetail,
-        },
-        shippingMethod: order.shipping.name,
-        products: order.orderProduct.map((op) => ({
-          productId: op.product.id,
-          name: op.product.name,
-          price: op.product.price,
-          amount: op.quantity,
-        })),
-        status: order.status,
-        totalPrice: order.totalPrice,
-        shippingPrice: order.shipping.price,
-    }));
-    */
-   // return result
+   
+   return result
 
 }
 async function verifyAddress({ userId, addressId}: { userId: number, addressId: number}){

@@ -211,6 +211,7 @@ export async function putProduct(req: AuthenticatedAdminRequest, res: Response){
         const isValid = putProductSCHEMA.validate(req.body, {abortEarly: false})
 
         if(isValid.error){
+            console.log(isValid.error)
             return res.sendStatus(httpStatus.BAD_REQUEST)
         }
 
@@ -255,6 +256,41 @@ export async function disableProduct(req: AuthenticatedAdminRequest, res: Respon
         }
 
         await productService.disableProduct(id)
+
+        return res.sendStatus(httpStatus.OK)
+        
+
+    } catch (error) {
+        if(error.name === "ConflictError") {
+            return res.sendStatus(httpStatus.CONFLICT);
+        }
+        if (error.name === "BadRequestError") {
+            return res.status(httpStatus.BAD_REQUEST).send(error);
+        }
+        if (error.name === "ForbiddenError") {
+            return res.status(httpStatus.FORBIDDEN).send(error);
+        }
+        return res.sendStatus(httpStatus.INTERNAL_SERVER_ERROR);
+    }
+}
+export async function activeProduct(req: AuthenticatedAdminRequest, res: Response){
+    try {        
+
+        const isValid = disableProductSCHEMA.validate(req.body, {abortEarly: false})
+
+        if(isValid.error){
+            return res.sendStatus(httpStatus.BAD_REQUEST)
+        }
+
+        const { id } = req.body
+
+        const result = await productService.getUniqueProductDataById( id )
+
+        if ( !result ){
+            return res.sendStatus(httpStatus.BAD_REQUEST)
+        }
+
+        await productService.enableProduct(id)
 
         return res.sendStatus(httpStatus.OK)
         

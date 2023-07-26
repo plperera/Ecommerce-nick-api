@@ -17,6 +17,16 @@ async function findAllActive(){
         }
     });
 }
+async function findAll(){
+    return prisma.shipping.findMany({
+        select: {
+            id: true,
+            name: true,
+            price: true,
+            isActive: true
+        }
+    });
+}
 async function findByName(name: string){
     return prisma.shipping.findFirst({
         where: {
@@ -29,6 +39,13 @@ async function findById(id: number){
         where: {
             id: id,
             isActive: true
+        }
+    });
+}
+async function findAllById(id: number){
+    return prisma.shipping.findFirst({
+        where: {
+            id: id,
         }
     });
 }
@@ -61,14 +78,27 @@ async function disableShipping( id : number ){
         }
     });
 }
+async function enableShipping( id : number ){
+    return prisma.shipping.update({
+        where: {
+            id: id
+        },
+        data: {
+            isActive: true
+        }
+    });
+}
 
 const shippingRepository = {
     findAllActive,
+    findAll,
     findByName,
     findById,
+    findAllById,
     createMethod,
     putShipping,
-    disableShipping
+    disableShipping,
+    enableShipping
 }
 
 export default shippingRepository

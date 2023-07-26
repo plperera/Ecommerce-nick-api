@@ -22,7 +22,7 @@ export type imagesArray = {
 export type tecnicDetailsArray = {
     tecnicDetails: {
         topic: string,
-        topicDetail: string
+        topicDetail: string | null
     }[]
 }
 
@@ -34,8 +34,8 @@ const createProductSCHEMA = joi.object<createProductBody>({
 
     tecnicDetails: joi.array().items(
         joi.object({
-            topic: joi.string().min(1).required(),
-            topicDetails: joi.string()
+            topic: joi.string().min(1).optional(),
+            topicDetail: joi.optional()
         })
     ),
 

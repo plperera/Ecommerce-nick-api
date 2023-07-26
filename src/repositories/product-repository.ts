@@ -44,6 +44,7 @@ export type productAdminBodyResponse = {
     description: string;
     price: number;
     stock: number,
+    isActive: boolean,
     productCategory: {
         category: {
             id: number;
@@ -111,6 +112,7 @@ async function findAll(){
             name: true,
             description: true,
             price: true,
+            isActive: true,
             tecnicDetails: {
                 select: {
                     topic: true,
@@ -409,6 +411,16 @@ async function disableProduct(id: number){
         }
     });
 }
+async function enableProduct(id: number){
+    return prisma.product.update({
+        where:{
+            id: id
+        },
+        data: {
+            isActive: true
+        }
+    });
+}
 
 const productRepository = {
     findAll,
@@ -425,7 +437,8 @@ const productRepository = {
     deleteManyImagesProduct,
     deleteManyTecnincDetails,
     putProduct,
-    disableProduct
+    disableProduct,
+    enableProduct
 }
 
 export default productRepository

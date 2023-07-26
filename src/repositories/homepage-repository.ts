@@ -20,6 +20,7 @@ async function findAllIBannersData(){
 async function findAllCategoriesHomeData(){
     return prisma.homeCategory.findMany({
         select: {
+            id: true,   
             subTitle: true,   
             image: {
                 select: {

@@ -26,6 +26,7 @@ async function getAllCategoriesHomeData(){
     
     const formatedResult = result.map(e => {
         return {
+            categoryCardId: e.id, 
             title: e.category.name, 
             subTitle: e.subTitle, 
             imageUrl: e.image.imageUrl, 

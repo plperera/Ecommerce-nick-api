@@ -12,6 +12,13 @@ async function getAllShippingData(){
     return result
 
 }
+async function getAdminAllShippingData(){
+
+    const result = await shippingRepository.findAll()
+
+    return result
+
+}
 async function verifyName(name: string){
 
     const result = await shippingRepository.findByName(name)
@@ -42,6 +49,16 @@ async function verifyValidId(id: number){
 
     return 
 }
+async function verifyValidIdForEnable(id: number){
+
+    const result = await shippingRepository.findAllById(id)
+
+    if ( !result ){
+        throw notFoundError("Não existe método de entrega com o ID passado")
+    }
+
+    return 
+}
 async function create({ name, price }: newShippingBody){
 
     await shippingRepository.createMethod({name, price})
@@ -60,6 +77,12 @@ async function disableShipping(id: number){
 
     return 
 }
+async function enableShipping(id: number){
+
+    await shippingRepository.enableShipping( id )
+
+    return 
+}
 
 const shippingService = {
     getAllShippingData,
@@ -68,7 +91,10 @@ const shippingService = {
     verifyValidId,
     putShipping,
     disableShipping,
-    verifyNameBelongsId
+    verifyNameBelongsId,
+    getAdminAllShippingData,
+    enableShipping,
+    verifyValidIdForEnable
 }
 
 export default shippingService

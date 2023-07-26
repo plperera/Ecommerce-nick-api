@@ -28,22 +28,12 @@ export async function getAllShippingMethods(req: AuthenticatedRequest, res: Resp
         return res.sendStatus(httpStatus.INTERNAL_SERVER_ERROR);
     }
 }
-export async function createShippingMethod(req: AuthenticatedAdminRequest, res: Response){
+export async function getAllShippingMethodsData(req: AuthenticatedRequest, res: Response){
     try {        
 
-        const isValid = newShippingSCHEMA.validate(req.body, {abortEarly: false})
+        const allShippingData = await shippingService.getAdminAllShippingData()
 
-        if(isValid.error){
-            return res.sendStatus(httpStatus.BAD_REQUEST)
-        }
-
-        const { name, price } = req.body
-
-        await shippingService.verifyName(name)
-
-        await shippingService.create({ name, price })
-
-        return res.sendStatus(httpStatus.CREATED)
+        return res.send(allShippingData).status(httpStatus.OK)
         
 
     } catch (error) {
@@ -59,6 +49,38 @@ export async function createShippingMethod(req: AuthenticatedAdminRequest, res: 
         return res.sendStatus(httpStatus.INTERNAL_SERVER_ERROR);
     }
 }
+export async function createShippingMethod(req: AuthenticatedAdminRequest, res: Response){
+    try {        
+
+        const isValid = newShippingSCHEMA.validate(req.body, {abortEarly: false})
+
+        if(isValid.error){
+            return res.sendStatus(httpStatus.BAD_REQUEST)
+        }
+
+        const { name, price } = req.body
+
+        await shippingService.verifyName(name)
+
+        await shippingService.create({ name, price: Number(price) })
+
+        return res.sendStatus(httpStatus.CREATED)
+        
+
+    } catch (error) {
+        if(error.name === "ConflictError") {
+            return res.sendStatus(httpStatus.CONFLICT);
+        }
+        if (error.name === "BadRequestError") {
+            return res.status(httpStatus.BAD_REQUEST).send(error);
+        }
+        if (error.name === "ForbiddenError") {
+            return res.status(httpStatus.FORBIDDEN).send(error);
+        }
+        console.log(error)
+        return res.sendStatus(httpStatus.INTERNAL_SERVER_ERROR);
+    }
+}
 export async function putShippingMethod(req: AuthenticatedAdminRequest, res: Response){
     try {        
 
@@ -70,10 +92,10 @@ export async function putShippingMethod(req: AuthenticatedAdminRequest, res: Res
 
         const { name, price, id } = req.body
 
-        await shippingService.verifyValidId(id)
+        await shippingService.verifyValidIdForEnable(id)
         await shippingService.verifyNameBelongsId({id, name})
 
-        await shippingService.putShipping({ name, price, id })
+        await shippingService.putShipping({ name, price: Number(price), id })
 
         return res.sendStatus(httpStatus.OK)
         
@@ -119,6 +141,38 @@ export async function disableShippingMethod(req: AuthenticatedAdminRequest, res:
         if (error.name === "ForbiddenError") {
             return res.status(httpStatus.FORBIDDEN).send(error);
         }
+        return res.sendStatus(httpStatus.INTERNAL_SERVER_ERROR);
+    }
+}
+export async function enableShippingMethod(req: AuthenticatedAdminRequest, res: Response){
+    try {        
+
+        const isValid = disableShippingSCHEMA.validate(req.body, {abortEarly: false})
+
+        if(isValid.error){
+            return res.sendStatus(httpStatus.BAD_REQUEST)
+        }
+
+        const { id } = req.body
+
+        await shippingService.verifyValidIdForEnable(id)
+
+        await shippingService.enableShipping(id)
+
+        return res.sendStatus(httpStatus.OK)
+        
+
+    } catch (error) {
+        if(error.name === "ConflictError") {
+            return res.sendStatus(httpStatus.CONFLICT);
+        }
+        if (error.name === "BadRequestError") {
+            return res.status(httpStatus.BAD_REQUEST).send(error);
+        }
+        if (error.name === "ForbiddenError") {
+            return res.status(httpStatus.FORBIDDEN).send(error);
+        }
+        console.log(error)
         return res.sendStatus(httpStatus.INTERNAL_SERVER_ERROR);
     }
 }
