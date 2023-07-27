@@ -5,8 +5,29 @@ import { AuthenticatedAdminRequest } from "@/middlewares/auth/authenticationAdmi
 import orderService from "@/services/order-service";
 import { newOrderBody, newOrderSCHEMA, savePaymentBody } from "@/schemas/order/newOrderSCHEMA";
 import paymentService from "@/services/payments-service";
+import { updateOrderBody, updateOrderSCHEMA } from "@/schemas/order/updateOrderSCHEMA";
 
+export async function getAllOrders(req: AuthenticatedRequest, res: Response){
+    try {        
 
+        const AllOrders = await orderService.getAllOrdersData()
+
+        return res.send(AllOrders).status(httpStatus.OK)
+        
+
+    } catch (error) {
+        if(error.name === "ConflictError") {
+            return res.sendStatus(httpStatus.CONFLICT);
+        }
+        if (error.name === "BadRequestError") {
+            return res.status(httpStatus.BAD_REQUEST).send(error);
+        }
+        if (error.name === "ForbiddenError") {
+            return res.status(httpStatus.FORBIDDEN).send(error);
+        }
+        return res.sendStatus(httpStatus.INTERNAL_SERVER_ERROR);
+    }
+}
 export async function getAllUserOrders(req: AuthenticatedRequest, res: Response){
     try {        
         const { userId } = req
@@ -57,6 +78,39 @@ export async function createNewOrder(req: AuthenticatedRequest, res: Response){
         await orderService.createNewOrder({body: req.body, userId, paymentId: paymentId, products: products, shippingPrice: shippingValue})
         
         return res.sendStatus(httpStatus.CREATED)
+        
+
+    } catch (error) {
+        if(error.name === "ConflictError") {
+            return res.sendStatus(httpStatus.CONFLICT);
+        }
+        if (error.name === "BadRequestError") {
+            console.log(error.message)
+            return res.status(httpStatus.BAD_REQUEST).send(error);
+        }
+        if (error.name === "ForbiddenError") {
+            return res.status(httpStatus.FORBIDDEN).send(error);
+        }
+        console.log(error)
+        return res.sendStatus(httpStatus.INTERNAL_SERVER_ERROR);
+    }
+}
+export async function updateOrderStatus(req: AuthenticatedRequest, res: Response){
+    try {        
+        const isValid = updateOrderSCHEMA.validate(req.body, {abortEarly: false})
+
+        if(isValid.error){
+            console.log(isValid.error)
+            return res.sendStatus(httpStatus.BAD_REQUEST)
+        }
+        
+        const { orderId, status }: updateOrderBody = req.body
+
+        await orderService.verifyOrderIdExist(orderId)
+        
+        await orderService.updateOrderStatus({orderId, status})
+        
+        return res.sendStatus(httpStatus.OK)
         
 
     } catch (error) {

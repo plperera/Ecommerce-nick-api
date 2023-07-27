@@ -10,6 +10,7 @@ import orderRepository from "@/repositories/order-repository";
 import productRepository, { productBodyResponse, productUniqueBodyResponse } from "@/repositories/product-repository";
 import shippingRepository from "@/repositories/shipping-repository";
 import { createNewOrderAndOrderProducts, newOrderBody, orderBody, orderCartBody, verifyValuesBody } from "@/schemas/order/newOrderSCHEMA";
+import { updateOrderBody } from "@/schemas/order/updateOrderSCHEMA";
 
 
 async function getAllOrdersDataByUser(userId: number){
@@ -43,6 +44,48 @@ async function getAllOrdersDataByUser(userId: number){
         }
     })
     return formatedProducts
+}
+async function getAllOrdersData(){
+
+    const result = await orderRepository.findAllOrder()
+
+    const formatedProducts = result.map(e => {
+        return {
+            orderId: e.id,
+            status: e.status,
+            address: e.address,
+            createdAt: e.createdAt,
+            installments: e.payment.installments,
+            paymentStatus: e.payment.paymentStatus,
+            paymentType: e.payment.paymentType,
+            transactionAmount: e.payment.transactionAmount,
+            shippingPrice: e.shippingPrice,
+            shippingName: e.shipping.name,
+            products: e.orderProduct.map(product => {
+                return {
+                    productName: product.product.name,
+                    productPrice: product.price,
+                    productQuantity: product.quantity,
+                    productImages: product.product.productImage.map( image => {
+                        return {
+                            imageUrl: image.image.imageUrl
+                        }
+                    })
+                }
+            }), 
+        }
+    })
+    return formatedProducts
+}
+async function verifyOrderIdExist(orderId: number){
+
+    const result = await orderRepository.findUniqueByOrderId(orderId)
+
+    if( !result ){
+        return notFoundError("Pedido não encontrado")
+    }
+
+    return 
 }
 async function verifyAddress({ userId, addressId}: { userId: number, addressId: number}){
 
@@ -129,6 +172,13 @@ async function createNewOrder(createNewOrderAndOrderProducts: createNewOrderAndO
 
     return
 }
+async function updateOrderStatus({status, orderId}: updateOrderBody){
+
+    await orderRepository.updateOrderStatus({status, orderId})
+    
+    return
+}
+
 
 const orderService = {
     getAllOrdersDataByUser,
@@ -136,7 +186,10 @@ const orderService = {
     verifyAddress,
     verifyShipping,
     verifyCart,
-    verifyValues
+    verifyValues,
+    getAllOrdersData,
+    verifyOrderIdExist,
+    updateOrderStatus
 }
 
 export default orderService
