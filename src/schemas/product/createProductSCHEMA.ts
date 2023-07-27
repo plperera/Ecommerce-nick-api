@@ -29,7 +29,7 @@ export type tecnicDetailsArray = {
 const createProductSCHEMA = joi.object<createProductBody>({
     name: joi.string().min(3).max(100).required(),
     description: joi.string().min(5).required(),
-    price: joi.number().integer().positive().required(),
+    price: joi.number().integer().min(0).required(),
     stock: joi.number().integer().positive().required(),
 
     tecnicDetails: joi.array().items(
