@@ -9,7 +9,6 @@ import paymentService from "@/services/payments-service";
 
 export async function getAllUserOrders(req: AuthenticatedRequest, res: Response){
     try {        
-
         const { userId } = req
 
         const AllOrders = await orderService.getAllOrdersDataByUser(userId)
@@ -30,7 +29,6 @@ export async function getAllUserOrders(req: AuthenticatedRequest, res: Response)
         return res.sendStatus(httpStatus.INTERNAL_SERVER_ERROR);
     }
 }
-
 export async function createNewOrder(req: AuthenticatedRequest, res: Response){
     try {        
 
@@ -56,7 +54,7 @@ export async function createNewOrder(req: AuthenticatedRequest, res: Response){
 
         const paymentId = await paymentService.savePayment({paymentData: paymentBody, userId})
         
-        await orderService.createNewOrder({body: req.body, userId, paymentId: paymentId, products: products})
+        await orderService.createNewOrder({body: req.body, userId, paymentId: paymentId, products: products, shippingPrice: shippingValue})
         
         return res.sendStatus(httpStatus.CREATED)
         

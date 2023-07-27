@@ -70,6 +70,7 @@ export type createNewOrderAndOrderProducts = {
     body: newOrderBody,
     userId: number,
     paymentId: number,
+    shippingPrice: number,
     products: {
         id: number;
         name: string;

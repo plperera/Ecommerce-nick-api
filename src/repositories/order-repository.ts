@@ -8,46 +8,69 @@ import { payment } from "mercadopago";
 
 
 
-async function findAllOrderByUser( userId: number ){
-  return prisma.user.findUnique({
+
+
+async function findAllOrderByUser(userId: number){
+  return prisma.order.findMany({
     where: {
-      id: userId,
+      userId: userId,
     },
-    include: {
-      session: true,
-      enrollment: true,
-      address: true,
-      order: {
-        include: {
-          orderProduct: {
-            include: {
-              product: {
-                include: {
-                  productCategory: true,
-                  productImage: true
+    select: {
+      id: true,
+      status: true,
+      createdAt: true,
+      shippingPrice: true,
+      address: {
+        select: {
+          id: true,
+          addressName: true,
+          cep: true,
+          street: true,
+          city: true,
+          state: true,
+          number: true,
+          neighborhood: true,
+          addressDetail: true,
+          isActive: true,
+        },
+      },
+      shipping: {
+        select: {
+          name: true,
+        },
+      },
+      payment: {
+        select: {
+          paymentType: true,
+          installments: true,
+          transactionAmount: true,
+          paymentStatus: true,
+        },
+      },
+      orderProduct: {
+        select: {
+          quantity: true,
+          price: true,
+          product: {
+            select: {
+              name: true,
+              productImage: {
+                select: {
+                  image: {
+                    select: {
+                      imageUrl: true
+                    }
+                  }
                 }
               }
-            }
+            },
           },
-          address: true,
-          shipping: true,
-          payment: true
-        }
+        },
       },
-      payment: true,
-      productFavorite: {
-        include: {
-          product: {
-            include: {
-              productCategory: true,
-              productImage: true
-            }
-          }
-        }
-      }
-    }
+    },
   })
 }
+
 /*
 async function createNewOrder({body, userId, totalPrice, paymentId}: {body: createOrderBody, userId: number, totalPrice: number, paymentId: number}){
     return prisma.order.create({
@@ -62,13 +85,14 @@ async function createNewOrder({body, userId, totalPrice, paymentId}: {body: crea
 
 }
 */
-async function createOrder( {userId, addressId, shippingId, paymentId}: {userId: number, addressId: number, shippingId: number, paymentId: number} ){
+async function createOrder( {userId, addressId, shippingId, paymentId, shippingPrice}: {userId: number, addressId: number, shippingId: number, paymentId: number, shippingPrice: number} ){
   return prisma.order.create({
     data: {
       userId: userId,
       addressId: addressId,
       shippingId: shippingId,
-      paymentId: paymentId
+      paymentId: paymentId,
+      shippingPrice: shippingPrice
     }
   })
 

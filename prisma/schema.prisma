@@ -196,8 +196,10 @@ enum OrderStatus {
 model order {
   id                Int             @id @default(autoincrement())
   userId            Int      
+  status            String          @default("waiting")
   addressId         Int      
-  shippingId        Int         
+  shippingId        Int
+  shippingPrice     Int         
   paymentId         Int         
   createdAt         DateTime        @default(now())
   updatedAt         DateTime        @updatedAt

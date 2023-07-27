@@ -15,9 +15,34 @@ import { createNewOrderAndOrderProducts, newOrderBody, orderBody, orderCartBody,
 async function getAllOrdersDataByUser(userId: number){
 
     const result = await orderRepository.findAllOrderByUser(userId)
-   
-   return result
 
+    const formatedProducts = result.map(e => {
+        return {
+            orderId: e.id,
+            status: e.status,
+            address: e.address,
+            createdAt: e.createdAt,
+            installments: e.payment.installments,
+            paymentStatus: e.payment.paymentStatus,
+            paymentType: e.payment.paymentType,
+            transactionAmount: e.payment.transactionAmount,
+            shippingPrice: e.shippingPrice,
+            shippingName: e.shipping.name,
+            products: e.orderProduct.map(product => {
+                return {
+                    productName: product.product.name,
+                    productPrice: product.price,
+                    productQuantity: product.quantity,
+                    productImages: product.product.productImage.map( image => {
+                        return {
+                            imageUrl: image.image.imageUrl
+                        }
+                    })
+                }
+            }), 
+        }
+    })
+    return formatedProducts
 }
 async function verifyAddress({ userId, addressId}: { userId: number, addressId: number}){
 
@@ -85,7 +110,8 @@ async function createNewOrder(createNewOrderAndOrderProducts: createNewOrderAndO
         userId: createNewOrderAndOrderProducts.userId, 
         addressId: createNewOrderAndOrderProducts.body.addressId, 
         shippingId: createNewOrderAndOrderProducts.body.shippingId, 
-        paymentId: createNewOrderAndOrderProducts.paymentId
+        paymentId: createNewOrderAndOrderProducts.paymentId,
+        shippingPrice: createNewOrderAndOrderProducts.shippingPrice
     })
     
     const hashProduct: any = {} 
