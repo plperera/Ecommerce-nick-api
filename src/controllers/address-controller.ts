@@ -12,7 +12,7 @@ export async function getAllEnrollment(req: AuthenticatedRequest, res: Response)
 
         const addressData = await addressService.getAddressByUserId(userId)
 
-        return res.send(addressData).status(httpStatus.OK)
+        return res.send(addressData.reverse()).status(httpStatus.OK)
         
 
     } catch (error) {

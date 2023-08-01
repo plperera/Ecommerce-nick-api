@@ -34,7 +34,7 @@ export async function getAllUserOrders(req: AuthenticatedRequest, res: Response)
 
         const AllOrders = await orderService.getAllOrdersDataByUser(userId)
 
-        return res.send(AllOrders).status(httpStatus.OK)
+        return res.send(AllOrders.reverse()).status(httpStatus.OK)
         
 
     } catch (error) {
@@ -112,6 +112,37 @@ export async function updateOrderStatus(req: AuthenticatedRequest, res: Response
         
         return res.sendStatus(httpStatus.OK)
         
+
+    } catch (error) {
+        if(error.name === "ConflictError") {
+            return res.sendStatus(httpStatus.CONFLICT);
+        }
+        if (error.name === "BadRequestError") {
+            console.log(error.message)
+            return res.status(httpStatus.BAD_REQUEST).send(error);
+        }
+        if (error.name === "ForbiddenError") {
+            return res.status(httpStatus.FORBIDDEN).send(error);
+        }
+        console.log(error)
+        return res.sendStatus(httpStatus.INTERNAL_SERVER_ERROR);
+    }
+}
+export async function createNewOrderByPix(req: AuthenticatedRequest, res: Response){
+    try {        
+        
+        /*
+        const isValid = newOrderSCHEMA.validate(req.body, {abortEarly: false})
+
+        if(isValid.error){
+            console.log(isValid.error)
+            return res.sendStatus(httpStatus.BAD_REQUEST)
+        }
+        */
+        const { userId } = req
+        const response = await paymentService.savePixPayment({body: req.body, userId: userId})
+
+        return res.status(httpStatus.CREATED).send(response)
 
     } catch (error) {
         if(error.name === "ConflictError") {

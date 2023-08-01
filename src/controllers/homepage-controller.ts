@@ -18,7 +18,7 @@ export async function getAllBanners(req: Request, res: Response){
 
         const AllBanners = await homePageService.getAllIBannersData()
 
-        return res.send(AllBanners).status(httpStatus.OK)
+        return res.send(AllBanners.reverse()).status(httpStatus.OK)
         
 
     } catch (error) {
@@ -30,7 +30,7 @@ export async function getAllCategoriesHome(req: Request, res: Response){
 
         const AllCategoriesHome = await homePageService.getAllCategoriesHomeData()
 
-        return res.send(AllCategoriesHome).status(httpStatus.OK)
+        return res.send(AllCategoriesHome.reverse()).status(httpStatus.OK)
         
 
     } catch (error) {
