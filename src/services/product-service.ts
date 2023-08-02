@@ -15,6 +15,8 @@ function FormatProducts(productsArray: productBodyResponse){
         name: product.name,
         description: product.description,
         price: product.price,
+        highPrice: product.highPrice,
+        stock: product.stock <= 0?(false):(true),
         categories: product.productCategory.map(e => ({
           categoryId: e.category.id,
           name: e.category.name
@@ -39,6 +41,7 @@ function FormatAdminProducts(productsArray: productAdminBodyResponse){
         name: product.name,
         description: product.description,
         price: product.price,
+        highPrice: product.highPrice,
         stock: product.stock,
         categories: product.productCategory.map(e => ({
           categoryId: e.category.id,
@@ -65,6 +68,7 @@ function FormatProductsForCart(productsArray: productCartBodyResponse){
         name: product.name,
         description: product.description,
         price: product.price,
+        highPrice: product.highPrice,
         images: product.productImage.map(e => ({
           mainImage: e.mainImage,
           imageUrl: e.image.imageUrl
@@ -133,6 +137,8 @@ async function getUniqueProductDataById( productId: number ) {
         name: result.name,
         description: result.description,
         price: result.price,
+        highPrice: result.highPrice,
+        stock: result.stock <= 0?(false):(true),
         categories: result.productCategory.map(e => ({
             categoryId: e.category.id,
             name: e.category.name
@@ -163,6 +169,8 @@ async function getUniqueProductDataByName( productName: string ) {
         name: result.name,
         description: result.description,
         price: result.price,
+        highPrice: result.highPrice,
+        stock: result.stock <= 0?(false):(true),
         categories: result.productCategory.map(e => ({
             categoryId: e.category.id,
             name: e.category.name
@@ -225,7 +233,8 @@ async function createProduct( body: createProductBody ) {
         name: body.name, 
         description: body.description, 
         price: body.price,
-        stock: body.stock
+        stock: body.stock,
+        highPrice: body.highPrice <= body.price ? (null):(body.highPrice)
     })
 
     const image = justOneTrue(body.images)
@@ -281,12 +290,15 @@ async function putProduct( body: putProductBody ) {
     await productRepository.createManyCategoriesProduct(newCategoryArray)
     await productRepository.createManyImagesProduct(newImagesArray)
 
+    const highPriceValue = body.highPrice <= body.price ? null : body.highPrice;
+
     await productRepository.putProduct({ 
         id: body.id,
         name: body.name, 
         description: body.description, 
         price: body.price,
-        stock: body.stock
+        stock: body.stock,
+        highPrice: highPriceValue
     })
 }
 async function disableProduct( id: number ) {

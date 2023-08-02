@@ -95,6 +95,8 @@ async function findAllFavoritesProductsData(userId: number){
                     name: true,
                     description: true,
                     price: true,
+                    highPrice: true,
+                    stock: true,
                     tecnicDetails: {
                         select: {
                             topic: true,

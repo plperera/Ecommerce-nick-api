@@ -6,6 +6,7 @@ export type productBody = {
     name: string,
     description: string,
     price: number,
+    highPrice: number,
     stock: number
 }
 export type categoriesArray = {
@@ -29,8 +30,9 @@ export type tecnicDetailsArray = {
 const createProductSCHEMA = joi.object<createProductBody>({
     name: joi.string().min(3).max(100).required(),
     description: joi.string().min(5).required(),
+    highPrice: joi.number().integer().min(0).optional(),
     price: joi.number().integer().min(0).required(),
-    stock: joi.number().integer().positive().required(),
+    stock: joi.number().integer().min(0).required(),
 
     tecnicDetails: joi.array().items(
         joi.object({

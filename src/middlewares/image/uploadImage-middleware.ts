@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import httpStatus from "http-status";
 
 import { AuthenticatedAdminRequest } from "../auth/authenticationAdmin-middlerare";
-import bucket from "@/config/firebaseconfig";
+import bucket from "../../config/firebaseconfig";
 
 export async function uploadImage(req: AuthenticatedAdminRequestWithPublicURL, res: Response, next: NextFunction) {
           

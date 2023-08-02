@@ -9,6 +9,7 @@ export type productCartBodyResponse = {
     name: string;
     description: string;
     price: number;
+    highPrice: number,
     productImage: {
         mainImage: boolean;
         image: {
@@ -21,6 +22,8 @@ export type productBodyResponse = {
     name: string;
     description: string;
     price: number;
+    highPrice: number,
+    stock: number;
     productCategory: {
         category: {
             id: number;
@@ -43,6 +46,7 @@ export type productAdminBodyResponse = {
     name: string;
     description: string;
     price: number;
+    highPrice: number,
     stock: number,
     isActive: boolean,
     productCategory: {
@@ -112,6 +116,7 @@ async function findAll(){
             name: true,
             description: true,
             price: true,
+            highPrice: true,
             isActive: true,
             tecnicDetails: {
                 select: {
@@ -157,6 +162,8 @@ async function findAllActive(){
             name: true,
             description: true,
             price: true,
+            highPrice: true,
+            stock: true,
             tecnicDetails: {
                 select: {
                     topic: true,
@@ -202,6 +209,8 @@ async function findAllActiveById(productIdArray: {productId: number}[]){
             name: true,
             description: true,
             price: true,
+            highPrice: true,
+            stock: true,
             productImage: {
                 select: {
                     mainImage: true,
@@ -233,6 +242,8 @@ async function findAllProductsActiveByCategoryId(categoryId: number){
             name: true,
             description: true,
             price: true,
+            highPrice: true,
+            stock: true,
             tecnicDetails: {
                 select: {
                     topic: true,
@@ -272,6 +283,8 @@ async function findProductById(productId: number){
         name: true,
         description: true,
         price: true,
+        highPrice: true,
+        stock: true, 
         isActive: true,
         tecnicDetails: {
             select: {
@@ -312,6 +325,8 @@ async function findByName(productName: string){
         name: true,
         description: true,
         price: true,
+        highPrice: true,
+        stock: true,
         isActive: true,
         tecnicDetails: {
             select: {
@@ -348,7 +363,8 @@ async function createProduct(body: productBody){
             name: body.name,
             description: body.description,
             price: body.price,
-            stock: body.stock
+            stock: body.stock,
+            highPrice: body.highPrice
         }
     });
 }
@@ -397,7 +413,8 @@ async function putProduct(body: Omit<putProductBody, "categories" | "images" | "
             name: body.name,
             description: body.description,
             price: body.price,
-            stock: body.stock
+            stock: body.stock,
+            highPrice: body.highPrice
         }
     });
 }
