@@ -1,5 +1,5 @@
 import * as admin from 'firebase-admin';
-import serviceAccount from '../../admin-firebase.json';
+import serviceAccount from './admin-firebase.json';
 import { loadEnv } from './envs';
 
 loadEnv()

@@ -1,9 +1,11 @@
+import { loadEnv, connectDb, disconnectDB } from "@/config";
+import cors from "cors";
+import express, { Express } from "express";
 import "reflect-metadata";
 import "express-async-errors";
-import express, { Express } from "express";
-import cors from "cors";
 
-import { loadEnv, connectDb, disconnectDB } from "@/config";
+loadEnv();
+
 import { enrollmentRouter } from "./routers/enrollment-router";
 import { addressRouter } from "./routers/address-router";
 import { authRouter } from "./routers/auth/auth-router";
@@ -17,7 +19,6 @@ import { paymentRouter } from "./routers/payment-router";
 import { homePageRouter } from "./routers/homepage-router";
 import { favoriteRouter } from "./routers/favorite-router";
 
-loadEnv();
 
 const app = express();
 app
