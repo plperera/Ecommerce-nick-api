@@ -1,8 +1,10 @@
 import { prisma } from "@/config";
 import { newHomeBannerBody } from "@/schemas/homePage/newHomeBannerSCHEMA";
 import { newHomeCategoryBody } from "@/schemas/homePage/newHomeCategorySCHEMA";
+import { newProductBannerBody } from "@/schemas/homePage/newProductBannerSCHEMA";
 import { putHomeBannerBody } from "@/schemas/homePage/putHomeBannerSCHEMA";
 import { putHomeCategoryBody } from "@/schemas/homePage/putHomeCategorySCHEMA";
+import { putProductBannerBody } from "@/schemas/homePage/putProductBannerSCHEMA";
 
 async function findAllIBannersData(){
     return prisma.banner.findMany({
@@ -21,7 +23,6 @@ async function findAllCategoriesHomeData(){
     return prisma.homeCategory.findMany({
         select: {
             id: true,   
-            subTitle: true,   
             image: {
                 select: {
                     imageUrl: true,
@@ -32,6 +33,31 @@ async function findAllCategoriesHomeData(){
                     name: true,
                 }
             }      
+        }
+    });
+}
+async function findAllProductBannerHomeData(){
+    return prisma.homeProductBanner.findMany({
+        select: {
+            id: true,   
+            image: {
+                select: {
+                    imageUrl: true,
+                }
+            },
+            product: {
+                select: {
+                    name: true
+                }
+            }      
+        }
+    });
+}
+async function createProductBanner(body: newProductBannerBody){
+    return prisma.homeProductBanner.create({
+        data:{
+            imageId: body.imageId,
+            productId: body.productId
         }
     });
 }
@@ -47,6 +73,13 @@ async function findBannerById(bannerId: number){
     return prisma.banner.findFirst({
         where: {
             id: bannerId
+        }
+    });
+}
+async function findProductBannerHomeById(productBannerId: number){
+    return prisma.homeProductBanner.findFirst({
+        where: {
+            id: productBannerId
         }
     });
 }
@@ -71,7 +104,6 @@ async function updateBanner(body: putHomeBannerBody){
 async function createHomeCategory(body: newHomeCategoryBody){
     return prisma.homeCategory.create({
         data:{
-            subTitle: body.subTitle,
             imageId: body.imageId,
             categoryId: body.categoryId
         }
@@ -91,6 +123,13 @@ async function deleteHomeCategoryById(homeCategoryId: number){
         }
     });
 }
+async function deleteProductBannerById(productBannerId: number){
+    return prisma.homeProductBanner.delete({
+        where: {
+            id: productBannerId
+        }
+    });
+}
 async function updateHomeCategory(body: putHomeCategoryBody){
     return prisma.homeCategory.update({
         where: {
@@ -99,7 +138,16 @@ async function updateHomeCategory(body: putHomeCategoryBody){
         data: {
             imageId: body.imageId,
             categoryId: body.categoryId,
-            subTitle: body.subTitle
+        }
+    });
+}
+async function updateProductBanner(body: putProductBannerBody){
+    return prisma.homeProductBanner.update({
+        where: {
+            id: body.productBannerId
+        },
+        data: {
+            productId: body.productId,
         }
     });
 }
@@ -114,7 +162,12 @@ const homePageRepository = {
     updateBanner,
     createHomeCategory,
     findHomeCategoryById,
+    findProductBannerHomeById,
     deleteHomeCategoryById,
-    updateHomeCategory
+    updateHomeCategory,
+    findAllProductBannerHomeData,
+    createProductBanner,
+    deleteProductBannerById,
+    updateProductBanner
 }
 export default homePageRepository

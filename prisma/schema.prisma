@@ -108,11 +108,12 @@ model product {
   createdAt         DateTime    @default(now())
   updatedAt         DateTime    @updatedAt
 
-  tecnicDetails     tecnicDetails[]
-  productCategory   productCategory[]
-  productImage      productImage[]
-  orderProduct      orderProduct[]
-  productFavorite   productFavorite[]
+  homeProductBanner   homeProductBanner[]
+  tecnicDetails       tecnicDetails[]
+  productCategory     productCategory[]
+  productImage        productImage[]
+  orderProduct        orderProduct[]
+  productFavorite     productFavorite[]
 }
 model productFavorite {
   id                Int          @id @default(autoincrement())
@@ -158,7 +159,6 @@ model banner {
 }
 model homeCategory {
   id                Int         @id @default(autoincrement())
-  subTitle          String  
   categoryId        Int           
   imageId           Int
   createdAt         DateTime    @default(now())
@@ -166,6 +166,16 @@ model homeCategory {
 
   image             image?      @relation(fields: [imageId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   category          category?   @relation(fields: [categoryId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+model homeProductBanner {
+  id                Int         @id @default(autoincrement())       
+  imageId           Int
+  productId         Int
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+
+  image             image?      @relation(fields: [imageId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  product           product?    @relation(fields: [productId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 model tecnicDetails {
   id                Int         @id @default(autoincrement())
@@ -177,15 +187,16 @@ model tecnicDetails {
   product           product?     @relation(fields: [productId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 model image {
-  id                Int         @id @default(autoincrement())
-  imageUrl          String
-  imageName         String
-  createdAt         DateTime    @default(now())
-  updatedAt         DateTime    @updatedAt
+  id                  Int         @id @default(autoincrement())
+  imageUrl            String
+  imageName           String
+  createdAt           DateTime    @default(now())
+  updatedAt           DateTime    @updatedAt
 
-  productImage      productImage[]
-  banner            banner[]
-  homeCategory      homeCategory[]
+  homeProductBanner   homeProductBanner[]
+  productImage        productImage[]
+  banner              banner[]
+  homeCategory        homeCategory[]
 }
 enum OrderStatus {
   PENDING

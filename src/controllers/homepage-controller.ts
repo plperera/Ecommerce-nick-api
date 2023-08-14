@@ -12,6 +12,9 @@ import { putHomeBannerSCHEMA } from "@/schemas/homePage/putHomeBannerSCHEMA";
 import { newHomeCategorySCHEMA } from "@/schemas/homePage/newHomeCategorySCHEMA";
 import { deleteHomeCategorySCHEMA } from "@/schemas/homePage/deleteHomeCategorySCHEMA";
 import { putHomeCategorySCHEMA } from "@/schemas/homePage/putHomeCategorySCHEMA";
+import { newProductBannerSCHEMA } from "@/schemas/homePage/newProductBannerSCHEMA";
+import { deleteProductBannerSCHEMA } from "@/schemas/homePage/deleteProductBannerSCHEMA";
+import { putProductBannerSCHEMA } from "@/schemas/homePage/putProductBannerSCHEMA";
 
 export async function getAllBanners(req: Request, res: Response){
     try {        
@@ -31,6 +34,18 @@ export async function getAllCategoriesHome(req: Request, res: Response){
         const AllCategoriesHome = await homePageService.getAllCategoriesHomeData()
 
         return res.send(AllCategoriesHome.reverse()).status(httpStatus.OK)
+        
+
+    } catch (error) {
+        return res.sendStatus(httpStatus.INTERNAL_SERVER_ERROR);
+    }
+}
+export async function getAllProductBanner(req: Request, res: Response){
+    try {        
+
+        const AllProductBanner = await homePageService.getAllProductBannerData()
+
+        return res.send(AllProductBanner.reverse()).status(httpStatus.OK)
         
 
     } catch (error) {
@@ -121,12 +136,12 @@ export async function createHomeCategory(req: AuthenticatedAdminRequest, res: Re
             return res.sendStatus(httpStatus.BAD_REQUEST)
         }
         
-        const { subTitle, imageId, categoryId } = req.body
+        const { imageId, categoryId } = req.body
  
         await homePageService.verifyImage(imageId)
         await homePageService.verifyCategory(categoryId)
 
-        await homePageService.createHomeCategory({ subTitle, imageId, categoryId })
+        await homePageService.createHomeCategory({ imageId, categoryId })
 
         return res.sendStatus(httpStatus.CREATED)
         
@@ -178,6 +193,82 @@ export async function updateHomeCategory(req: AuthenticatedAdminRequest, res: Re
         await homePageService.verifyCategory(categoryId)
 
         await homePageService.updateHomeCategory({ homeCategoryId, imageId, categoryId, subTitle })
+
+        return res.sendStatus(httpStatus.OK)
+        
+
+    } catch (error) {
+        if (error.name === "BadRequestError") {
+            return res.status(httpStatus.BAD_REQUEST).send(error);
+        }
+        return res.sendStatus(httpStatus.INTERNAL_SERVER_ERROR);
+    }
+}
+export async function createProductBanner(req: AuthenticatedAdminRequest, res: Response){
+    try {       
+        
+        const isValid = newProductBannerSCHEMA.validate(req.body, {abortEarly: false})
+
+        if(isValid.error){
+            return res.sendStatus(httpStatus.BAD_REQUEST)
+        }
+        
+        const { imageId, productId } = req.body
+ 
+        await homePageService.verifyImage(imageId)
+        await homePageService.verifyProductId(productId)
+
+        await homePageService.createProductBanner({ imageId, productId })
+
+        return res.sendStatus(httpStatus.CREATED)
+        
+
+    } catch (error) {
+        if (error.name === "BadRequestError") {
+            return res.status(httpStatus.BAD_REQUEST).send(error);
+        }
+        return res.sendStatus(httpStatus.INTERNAL_SERVER_ERROR);
+    }
+}
+export async function deleteProductBanner(req: AuthenticatedAdminRequest, res: Response){
+    try {       
+        
+        const isValid = deleteProductBannerSCHEMA.validate(req.body, {abortEarly: false})
+
+        if(isValid.error){
+            return res.sendStatus(httpStatus.BAD_REQUEST)
+        }
+        const { productBannerId } = req.body
+
+        await homePageService.verifyProductBannerId(productBannerId)
+
+        await homePageService.deleteProductBanner(productBannerId)
+
+        return res.sendStatus(httpStatus.OK)
+        
+
+    } catch (error) {
+        if (error.name === "BadRequestError") {
+            return res.status(httpStatus.BAD_REQUEST).send(error);
+        }
+        return res.sendStatus(httpStatus.INTERNAL_SERVER_ERROR);
+    }
+}
+export async function updateProductBanner(req: AuthenticatedAdminRequest, res: Response){
+    try {       
+        
+        const isValid = putProductBannerSCHEMA.validate(req.body, {abortEarly: false})
+
+        if(isValid.error){
+            return res.sendStatus(httpStatus.BAD_REQUEST)
+        }
+        
+        const { productBannerId, productId } = req.body
+
+        await homePageService.verifyProductBannerId(productBannerId)
+        await homePageService.verifyProductId(productId)
+
+        await homePageService.updateProductBanner({ productBannerId, productId })
 
         return res.sendStatus(httpStatus.OK)
         
