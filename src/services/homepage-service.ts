@@ -31,6 +31,7 @@ async function getAllCategoriesHomeData(){
         return {
             categoryCardId: e.id, 
             imageUrl: e.image.imageUrl, 
+            categoryName: e.category.name
         }
     })
     
@@ -139,7 +140,7 @@ async function updateHomeCategory(body: putHomeCategoryBody){
     return 
 }
 async function deleteProductBanner(productBannerId: number){
-    await homePageRepository.deleteHomeCategoryById(productBannerId)
+    await homePageRepository.deleteProductBannerById(productBannerId)
     return 
 }
 async function updateProductBanner(body: putProductBannerBody){

@@ -148,6 +148,7 @@ async function updateProductBanner(body: putProductBannerBody){
         },
         data: {
             productId: body.productId,
+            imageId: body.imageId,
         }
     });
 }

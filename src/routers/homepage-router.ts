@@ -1,4 +1,4 @@
-import { createHomeCategory, createNewBanner, deleteBanner, deleteHomeCategory, getAllBanners, getAllCategoriesHome, updateBanner, updateHomeCategory } from '@/controllers/homepage-controller'
+import { createHomeCategory, createNewBanner, createProductBanner, deleteBanner, deleteHomeCategory, deleteProductBanner, getAllBanners, getAllCategoriesHome, getAllProductBanner, updateBanner, updateHomeCategory, updateProductBanner } from '@/controllers/homepage-controller'
 import { authenticateAdminToken } from '@/middlewares/auth/authenticationAdmin-middlerare'
 import { Router } from 'express'
 
@@ -8,6 +8,7 @@ homePageRouter
     
     .get("/banners", getAllBanners)
     .get("/category", getAllCategoriesHome)
+    .get("/productbanner", getAllProductBanner)
 
     .all("/*", authenticateAdminToken)
 
@@ -18,6 +19,10 @@ homePageRouter
     .post("/category/admin", createHomeCategory)
     .delete("/category/admin", deleteHomeCategory)
     .put("/category/admin", updateHomeCategory)
+
+    .post("/productbanner/admin", createProductBanner)
+    .delete("/productbanner/admin", deleteProductBanner)
+    .put("/productbanner/admin", updateProductBanner)
    
 
 export { homePageRouter }

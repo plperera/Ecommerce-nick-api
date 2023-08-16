@@ -1,10 +1,6 @@
 import { Request, Response } from "express";
 import httpStatus from "http-status";
 import { AuthenticatedAdminRequest } from "@/middlewares/auth/authenticationAdmin-middlerare";
-import imageService from "@/services/image-service";
-import { AuthenticatedAdminRequestWithPublicURL } from "@/middlewares/image/uploadImage-middleware";
-import { deleleImageSCHEMA } from "@/schemas/image/deleteImageSCHEMA";
-import { format } from "date-fns";
 import homePageService from "@/services/homepage-service";
 import { newHomeBannerSCHEMA } from "@/schemas/homePage/newHomeBannerSCHEMA";
 import { deleteHomeBannerSCHEMA } from "@/schemas/homePage/deleteHomeBannerSCHEMA";
@@ -133,6 +129,7 @@ export async function createHomeCategory(req: AuthenticatedAdminRequest, res: Re
         const isValid = newHomeCategorySCHEMA.validate(req.body, {abortEarly: false})
 
         if(isValid.error){
+            console.log(isValid.error)
             return res.sendStatus(httpStatus.BAD_REQUEST)
         }
         
@@ -147,6 +144,7 @@ export async function createHomeCategory(req: AuthenticatedAdminRequest, res: Re
         
 
     } catch (error) {
+        console.log(error?.message)
         if (error.name === "BadRequestError") {
             return res.status(httpStatus.BAD_REQUEST).send(error);
         }
@@ -192,7 +190,7 @@ export async function updateHomeCategory(req: AuthenticatedAdminRequest, res: Re
         await homePageService.verifyImage(imageId)
         await homePageService.verifyCategory(categoryId)
 
-        await homePageService.updateHomeCategory({ homeCategoryId, imageId, categoryId, subTitle })
+        await homePageService.updateHomeCategory({ homeCategoryId, imageId, categoryId })
 
         return res.sendStatus(httpStatus.OK)
         
@@ -251,6 +249,7 @@ export async function deleteProductBanner(req: AuthenticatedAdminRequest, res: R
         if (error.name === "BadRequestError") {
             return res.status(httpStatus.BAD_REQUEST).send(error);
         }
+        console.log(error)
         return res.sendStatus(httpStatus.INTERNAL_SERVER_ERROR);
     }
 }
@@ -263,12 +262,13 @@ export async function updateProductBanner(req: AuthenticatedAdminRequest, res: R
             return res.sendStatus(httpStatus.BAD_REQUEST)
         }
         
-        const { productBannerId, productId } = req.body
+        const { productBannerId, productId, imageId } = req.body
 
         await homePageService.verifyProductBannerId(productBannerId)
         await homePageService.verifyProductId(productId)
+        await homePageService.verifyImage(imageId)
 
-        await homePageService.updateProductBanner({ productBannerId, productId })
+        await homePageService.updateProductBanner({ productBannerId, productId, imageId })
 
         return res.sendStatus(httpStatus.OK)
         
