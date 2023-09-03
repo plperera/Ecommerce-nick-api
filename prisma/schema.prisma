@@ -111,6 +111,7 @@ model product {
   homeProductBanner   homeProductBanner[]
   tecnicDetails       tecnicDetails[]
   productCategory     productCategory[]
+  productSubCategory  productSubCategory[]
   productImage        productImage[]
   orderProduct        orderProduct[]
   productFavorite     productFavorite[]
@@ -130,6 +131,13 @@ model productCategory {
   product           product?     @relation(fields: [productId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   category          category?    @relation(fields: [categoryId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
+model productSubCategory {
+  id                Int             @id @default(autoincrement())
+  productId         Int
+  subCategoryId     Int
+  product           product?        @relation(fields: [productId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  subCategory       subCategory?    @relation(fields: [subCategoryId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
 model productImage {
   id                Int          @id @default(autoincrement())
   productId         Int
@@ -139,14 +147,35 @@ model productImage {
   image             image?       @relation(fields: [imageId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 model category {
-  id                Int         @id @default(autoincrement())
-  name              String      @unique
-  createdAt         DateTime    @default(now())
-  updatedAt         DateTime    @updatedAt
-  isActive          Boolean     @default(true)
+  id                    Int         @id @default(autoincrement())
+  name                  String      @unique
+  createdAt             DateTime    @default(now())
+  updatedAt             DateTime    @updatedAt
+  isActive              Boolean     @default(true)
+  showInMenu            Boolean     @default(false)
 
-  productCategory   productCategory[]
-  homeCategory      homeCategory[]
+  categorySubCategory   categorySubCategory[]
+  productCategory       productCategory[]
+  homeCategory          homeCategory[]
+}
+model subCategory {
+  id                    Int         @id @default(autoincrement())
+  name                  String      @unique
+  createdAt             DateTime    @default(now())
+  updatedAt             DateTime    @updatedAt
+  isActive              Boolean     @default(true)
+  showInMenu            Boolean     @default(false)
+
+  categorySubCategory   categorySubCategory[]
+  productSubCategory    productSubCategory[]
+}
+model categorySubCategory {
+  id                 Int             @id @default(autoincrement())
+  categoryId         Int
+  subCategoryId      Int
+
+  category           category?       @relation(fields: [categoryId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  subCategory        subCategory?    @relation(fields: [subCategoryId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 model banner {
   id                Int         @id @default(autoincrement())
