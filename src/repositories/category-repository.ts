@@ -67,6 +67,29 @@ async function disableCategory(id : number){
         }
     });
 }
+async function verifyLink({ subCategoryId, categoryId }: { subCategoryId: number, categoryId: number }){
+    return prisma.categorySubCategory.findFirst({
+        where: {
+            categoryId,
+            subCategoryId
+        }
+    });
+}
+async function handleLinkSubCategory({ subCategoryId, categoryId }: { subCategoryId: number, categoryId: number }){
+    return prisma.categorySubCategory.create({
+        data: {
+            categoryId,
+            subCategoryId
+        }
+    });
+}
+async function handleUnLinkSubCategory(linkId: number){
+    return prisma.categorySubCategory.delete({
+        where: {
+            id: linkId
+        }
+    });
+}
 
 const categoryRepository = {
     findAllActive,
@@ -74,7 +97,10 @@ const categoryRepository = {
     findById,
     createCategory,
     putCategory,
-    disableCategory
+    disableCategory,
+    verifyLink,
+    handleLinkSubCategory,
+    handleUnLinkSubCategory
 }
 
 export default categoryRepository

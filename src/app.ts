@@ -18,6 +18,7 @@ import { orderRouter } from "./routers/order-router";
 import { paymentRouter } from "./routers/payment-router";
 import { homePageRouter } from "./routers/homepage-router";
 import { favoriteRouter } from "./routers/favorite-router";
+import { subCategoryRouter } from "./routers/sub-category-router";
 
 
 const app = express();
@@ -37,6 +38,7 @@ app
   .use("/order", orderRouter)
   .use("/homepage", homePageRouter)
   .use("/favorite", favoriteRouter)
+  .use("/subcategory", subCategoryRouter)
 
 export function init(): Promise<Express> {
   connectDb();
