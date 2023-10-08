@@ -6,13 +6,14 @@ import categoryService from "@/services/category-service";
 import { newCategorySCHEMA } from "@/schemas/category/newCategorySCHEMA";
 import { putCategorySCHEMA } from "@/schemas/category/putCategorySCHEMA";
 import { disableCategorySCHEMA } from "@/schemas/category/disableCategorySCHEMA";
+import subCategoryService from "@/services/subCategories-service";
 
-export async function getAllCategories(req: AuthenticatedRequest, res: Response){
+export async function getAllSubCategoriesData(req: AuthenticatedRequest, res: Response){
     try {        
+        
+        const getAllSubCategoriesData = await subCategoryService.getAllSubCategoriesData()
 
-        const getAllCategoriesData = await categoryService.getAllCategoriesData()
-
-        return res.send(getAllCategoriesData).status(httpStatus.OK)
+        return res.send(getAllSubCategoriesData).status(httpStatus.OK)
         
 
     } catch (error) {
@@ -28,7 +29,7 @@ export async function getAllCategories(req: AuthenticatedRequest, res: Response)
         return res.sendStatus(httpStatus.INTERNAL_SERVER_ERROR);
     }
 }
-export async function createCategory(req: AuthenticatedAdminRequest, res: Response){
+export async function createSubCategory(req: AuthenticatedAdminRequest, res: Response){
     try {        
 
         const isValid = newCategorySCHEMA.validate(req.body, {abortEarly: false})

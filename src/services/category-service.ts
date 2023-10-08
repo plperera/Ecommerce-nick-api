@@ -11,8 +11,23 @@ async function getAllCategoriesData(){
 
     const result = await categoryRepository.findAllActive()
 
-    return result
-
+    const formatedResult = result.map(e => {
+        return {
+            categoryId: e.id,
+            categoryName: e.name,
+            subCategories: [
+                e.categorySubCategory.map(s => {
+                    return {
+                        subCategoryId: s.subCategory.id,
+                        subCategoryName: s.subCategory.name,
+                        subCategoryShowInMenu: s.subCategory.showInMenu,
+                        subCategoryIsActived: s.subCategory.isActive
+                    }
+                }).filter(sf => sf?.subCategoryIsActived)
+            ]
+        }
+    })
+    return formatedResult
 }
 async function verifyName(name: string){
 

@@ -23,7 +23,7 @@
     "nodejs"
   ],
   "_moduleAliases": {
-    "@": "./dist"
+    "@": "./src"
   },
   "author": "Pedro Pereira",
   "license": "ISC",

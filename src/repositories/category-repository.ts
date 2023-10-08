@@ -9,7 +9,20 @@ async function findAllActive(){
         },
         select: {
             id: true,
-            name: true
+            name: true,
+            categorySubCategory: {
+                select: {
+                    subCategory: {
+                        select: {
+                            id: true,
+                            name: true,
+                            showInMenu: true,
+                            isActive: true
+                        }
+
+                    }
+                }
+            }
         }
     });
 }
