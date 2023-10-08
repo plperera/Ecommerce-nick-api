@@ -7,6 +7,8 @@ import { newCategorySCHEMA } from "@/schemas/category/newCategorySCHEMA";
 import { putCategorySCHEMA } from "@/schemas/category/putCategorySCHEMA";
 import { disableCategorySCHEMA } from "@/schemas/category/disableCategorySCHEMA";
 import subCategoryService from "@/services/subCategories-service";
+import { newSubCategorySCHEMA } from "@/schemas/subCategories/newSubCategorySCHEMA";
+import { putSubCategorySCHEMA } from "@/schemas/subCategories/putSubCategorySCHEMA";
 
 export async function getAllSubCategoriesData(req: AuthenticatedRequest, res: Response){
     try {        
@@ -32,17 +34,17 @@ export async function getAllSubCategoriesData(req: AuthenticatedRequest, res: Re
 export async function createSubCategory(req: AuthenticatedAdminRequest, res: Response){
     try {        
 
-        const isValid = newCategorySCHEMA.validate(req.body, {abortEarly: false})
+        const isValid = newSubCategorySCHEMA.validate(req.body, {abortEarly: false})
 
         if(isValid.error){
             return res.sendStatus(httpStatus.BAD_REQUEST)
         }
 
-        const { name } = req.body
+        const { subCategoryName } = req.body
 
-        await categoryService.verifyName(name)
+        await subCategoryService.verifySubCategoryName({subCategoryName, mustHave: false})
 
-        await categoryService.createCategory({ name })
+        await subCategoryService.createSubCategory(subCategoryName)
 
         return res.sendStatus(httpStatus.CREATED)
         
@@ -60,21 +62,22 @@ export async function createSubCategory(req: AuthenticatedAdminRequest, res: Res
         return res.sendStatus(httpStatus.INTERNAL_SERVER_ERROR);
     }
 }
-export async function putCategory(req: AuthenticatedAdminRequest, res: Response){
+export async function putSubCategory(req: AuthenticatedAdminRequest, res: Response){
     try {        
 
-        const isValid = putCategorySCHEMA.validate(req.body, {abortEarly: false})
+        const isValid = putSubCategorySCHEMA.validate(req.body, {abortEarly: false})
 
         if(isValid.error){
             return res.sendStatus(httpStatus.BAD_REQUEST)
         }
 
-        const { name, id } = req.body
+        const { subCategoryId } = req.body
+        const newSubCategoryName = req.body.subCategoryName
 
-        await categoryService.verifyValidId(id)
-        await categoryService.verifyNameBelongsId({id, name})
+        await subCategoryService.verifySubCategoryName({subCategoryName: newSubCategoryName, mustHave: false})
+        await subCategoryService.verifySubCategoryId(subCategoryId)
 
-        await categoryService.putCategory({ name, id })
+        await subCategoryService.updateSubCategory({ subCategoryId, newSubCategoryName })
 
         return res.sendStatus(httpStatus.OK)
         
