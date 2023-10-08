@@ -1,3 +1,4 @@
+import { acceptedError } from "@/errors/accepted-error";
 import { conflictError } from "@/errors/conflict-error";
 import { notFoundError } from "@/errors/not-found-error";
 import subCategoryRepository from "@/repositories/subCategory-repository";
@@ -54,6 +55,26 @@ async function updateSubCategory({ subCategoryId, newSubCategoryName }: { subCat
     const response = await subCategoryRepository.updateSubCategory({subCategoryId, newSubCategoryName})
     return response
 }
+async function changeStatusSubCategory({ subCategoryId, newStatus }: { subCategoryId: number, newStatus: boolean }){
+    const response = await subCategoryRepository.changeStatusSubCategory({subCategoryId, newStatus})
+    return response
+}
+async function handleLinkProduct({ subCategoryId, productId }: { subCategoryId: number, productId: number }){
+    const response = await subCategoryRepository.handleLinkProduct({subCategoryId, productId})
+    return response
+}
+async function handleUnLinkProduct({ linkId }: { linkId: number }){
+    const response = await subCategoryRepository.handleUnLinkProduct(linkId)
+    return response
+}
+async function verifyLink({ subCategoryId, productId }: { subCategoryId: number, productId: number }){
+    const hasLink = await subCategoryRepository.findLink({subCategoryId, productId})
+    // if (hasLink){
+    //     throw acceptedError("Produto ja linkado com essa SubCategoria")
+    // }
+    return hasLink
+}
+
 
 
 const subCategoryService = {
@@ -61,7 +82,11 @@ const subCategoryService = {
     verifySubCategoryName,
     createSubCategory,
     verifySubCategoryId,
-    updateSubCategory
+    updateSubCategory,
+    changeStatusSubCategory,
+    handleLinkProduct,
+    verifyLink,
+    handleUnLinkProduct
 }
 
 export default subCategoryService

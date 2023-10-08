@@ -217,6 +217,15 @@ async function verifyName( name: string ) {
     }
 
 }
+async function verifyProductId( productId: number ) {
+
+    const hasProduct = await productRepository.findProductById(productId)
+
+    if( !hasProduct ){
+        throw notFoundError("Produto não encontrado")
+    }
+
+}
 async function verifyNameBelongsId ({ name, id }: { name: string, id: number}){
 
     const result = await productRepository.findByName(name)
@@ -324,7 +333,8 @@ const productService = {
     createProduct,
     putProduct,
     disableProduct,
-    enableProduct
+    enableProduct,
+    verifyProductId
 }
 
 export default productService

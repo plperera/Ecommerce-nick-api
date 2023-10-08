@@ -122,3 +122,43 @@ export async function disableCategory(req: AuthenticatedAdminRequest, res: Respo
         return res.sendStatus(httpStatus.INTERNAL_SERVER_ERROR);
     }
 }
+// export async function handleSubCategoryLink(req: AuthenticatedAdminRequest, res: Response){
+//     try {        
+
+//         const isValid = linkSubCategoryCategorySCHEMA.validate(req.body, {abortEarly: false})
+
+//         if(isValid.error){
+//             return res.sendStatus(httpStatus.BAD_REQUEST)
+//         }
+
+//         const { subCategoryId, productId } = req.body
+
+//         await subCategoryService.verifySubCategoryId(subCategoryId)
+//         await productService.verifyProductId(productId)
+//         const hasLink = await subCategoryService.verifyLink({ subCategoryId, productId })
+
+//         if (hasLink) {
+//             await subCategoryService.handleUnLinkProduct({ linkId: hasLink?.id })
+//         } else {
+//             await subCategoryService.handleLinkProduct({ subCategoryId, productId })
+//         }
+
+//         return res.sendStatus(httpStatus.OK)
+        
+
+//     } catch (error) {
+//         if(error.name === "AcceptedError") {
+//             return res.sendStatus(httpStatus.ACCEPTED);
+//         }
+//         if(error.name === "ConflictError") {
+//             return res.sendStatus(httpStatus.CONFLICT);
+//         }
+//         if (error.name === "BadRequestError") {
+//             return res.status(httpStatus.BAD_REQUEST).send(error);
+//         }
+//         if (error.name === "ForbiddenError") {
+//             return res.status(httpStatus.FORBIDDEN).send(error);
+//         }
+//         return res.sendStatus(httpStatus.INTERNAL_SERVER_ERROR);
+//     }
+// }

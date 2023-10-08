@@ -59,16 +59,50 @@ async function updateSubCategory({ subCategoryId, newSubCategoryName }: { subCat
         }
     });
 }
-
-
+async function changeStatusSubCategory({ subCategoryId, newStatus }: { subCategoryId: number, newStatus: boolean }){
+    return prisma.subCategory.update({
+        where: {
+            id: subCategoryId
+        },
+        data: {
+            isActive: newStatus
+        }
+    });
+}
+async function handleLinkProduct({ subCategoryId, productId }: { subCategoryId: number, productId: number }){
+    return prisma.productSubCategory.create({
+        data: {
+            subCategoryId: subCategoryId,
+            productId: productId
+        }
+    });
+}
+async function handleUnLinkProduct(linkId: number){
+    return prisma.productSubCategory.delete({
+        where: {
+            id: linkId
+        }
+    });
+}
+async function findLink({ subCategoryId, productId }: { subCategoryId: number, productId: number }){
+    return prisma.productSubCategory.findFirst({
+        where: {
+            subCategoryId: subCategoryId,
+            productId: productId
+        }
+    });
+}
 
 const subCategoryRepository = {
     findAllSubCategoriesData,
     findSubCategoryByName,
     createSubCategory,
     findSubCategoryById,
-    updateSubCategory
-
+    updateSubCategory,
+    changeStatusSubCategory,
+    handleLinkProduct,
+    findLink,
+    handleUnLinkProduct
 }
 
 export default subCategoryRepository
