@@ -5,6 +5,7 @@ import { notFoundError } from "@/errors/not-found-error";
 import categoryRepository from "@/repositories/category-repository";
 import imageRepository from "@/repositories/image-repository";
 import productRepository, { productAdminBodyResponse, productBodyResponse, productCartBodyResponse, productUniqueBodyResponse } from "@/repositories/product-repository";
+import subCategoryRepository from "@/repositories/subCategory-repository";
 import { createProductBody, imagesArray } from "@/schemas/product/createProductSCHEMA";
 import { putProductBody } from "@/schemas/product/putProductSCHEMA";
 
@@ -17,13 +18,13 @@ function FormatProducts(productsArray: productBodyResponse){
         price: product.price,
         highPrice: product.highPrice,
         stock: product.stock <= 0?(false):(true),
-        categories: product.productCategory.map(e => ({
-          categoryId: e.category.id,
-          name: e.category.name
+        subCategories: product.productSubCategory.map(e => ({
+            subCategoryId: e.subCategory.id,
+            subCategoryName: e.subCategory.name
         })),
         images: product.productImage.map(e => ({
-          mainImage: e.mainImage,
-          imageUrl: e.image.imageUrl
+            mainImage: e.mainImage,
+            imageUrl: e.image.imageUrl
         })),
         tecnicDetails: product.tecnicDetails.map(e => ({
             topic: e.topic,
@@ -43,15 +44,15 @@ function FormatAdminProducts(productsArray: productAdminBodyResponse){
         price: product.price,
         highPrice: product.highPrice,
         stock: product.stock,
-        categories: product.productCategory.map(e => ({
-          categoryId: e.category.id,
-          name: e.category.name
+        subCategories: product.productSubCategory.map(e => ({
+            subCategoryId: e.subCategory.id,
+            subCategoryName: e.subCategory.name
         })),
         images: product.productImage.map(e => ({
-          mainImage: e.mainImage,
-          imageUrl: e.image.imageUrl,
-          imageName: e.image.imageName,
-          id: e.image.id
+            mainImage: e.mainImage,
+            imageUrl: e.image.imageUrl,
+            imageName: e.image.imageName,
+            id: e.image.id
         })),
         tecnicDetails: product.tecnicDetails.map(e => ({
             topic: e.topic,
@@ -116,7 +117,7 @@ async function getAllProductsDataById(productIdArray: {productId: number}[]){
 
     return formattedProducts
 }
-async function getAllProductsDataByCategoryId( categoryId: number ){
+async function getAllProductsDataBySubCategoryId( categoryId: number ){
 
     const result = await productRepository.findAllProductsActiveByCategoryId(categoryId)
 
@@ -139,9 +140,9 @@ async function getUniqueProductDataById( productId: number ) {
         price: result.price,
         highPrice: result.highPrice,
         stock: result.stock <= 0?(false):(true),
-        categories: result.productCategory.map(e => ({
-            categoryId: e.category.id,
-            name: e.category.name
+        subCategories: result.productSubCategory.map(e => ({
+            subCategoryId: e.subCategory.id,
+            subCategoryName: e.subCategory.name
         })),
         images: result.productImage.map(e => ({
             mainImage: e.mainImage,
@@ -171,9 +172,9 @@ async function getUniqueProductDataByName( productName: string ) {
         price: result.price,
         highPrice: result.highPrice,
         stock: result.stock <= 0?(false):(true),
-        categories: result.productCategory.map(e => ({
-            categoryId: e.category.id,
-            name: e.category.name
+        subCategories: result.productSubCategory.map(e => ({
+            subCategoryId: e.subCategory.id,
+            subCategoryName: e.subCategory.name
         })),
         images: result.productImage.map(e => ({
             mainImage: e.mainImage,
@@ -188,12 +189,12 @@ async function getUniqueProductDataByName( productName: string ) {
     return formattedProduct
     
 }
-async function verifyCategoryAndImageArrays( body: createProductBody ) {
+async function verifySubCategoryAndImageArrays( body: createProductBody ) {
 
-    const { categories, images } = body
+    const { subCategories, images } = body
     
-    categories.map( async e => {
-        const result = await categoryRepository.findById( e.categoryId )
+    subCategories.map( async e => {
+        const result = await subCategoryRepository.findSubCategoryById( e.subCategoryId )
         if (!result) {
             throw badRequestError("Categoria inexistente")
         }
@@ -254,8 +255,8 @@ async function createProduct( body: createProductBody ) {
         topicDetail: e.topicDetail
     }));
 
-    const newCategoryArray = body.categories.map(e => ({
-        categoryId: e.categoryId,
+    const newSubCategoryArray = body.subCategories.map(e => ({
+        subCategoryId: e.subCategoryId,
         productId: productData.id
     }));
 
@@ -266,7 +267,7 @@ async function createProduct( body: createProductBody ) {
     }));
 
     await productRepository.createManyTecnicDetails(newTecnincDetails)
-    await productRepository.createManyCategoriesProduct(newCategoryArray)
+    await productRepository.createManyCategoriesProduct(newSubCategoryArray)
     await productRepository.createManyImagesProduct(newImagesArray)
 
 }
@@ -280,8 +281,8 @@ async function putProduct( body: putProductBody ) {
         topicDetail: e.topicDetail
     }));
 
-    const newCategoryArray = body.categories.map(e => ({
-        categoryId: e.categoryId,
+    const newSubCategoryArray = body.subCategories.map(e => ({
+        subCategoryId: e.subCategoryId,
         productId: body.id
     }));
 
@@ -292,11 +293,11 @@ async function putProduct( body: putProductBody ) {
     }));
 
     await productRepository.deleteManyTecnincDetails(body.id)
-    await productRepository.deleteManyCategoriesProduct(body.id)
+    await productRepository.deleteManySubCategoriesProduct(body.id)
     await productRepository.deleteManyImagesProduct(body.id)
 
     await productRepository.createManyTecnicDetails(newTecnincDetails)
-    await productRepository.createManyCategoriesProduct(newCategoryArray)
+    await productRepository.createManyCategoriesProduct(newSubCategoryArray)
     await productRepository.createManyImagesProduct(newImagesArray)
 
     const highPriceValue = body.highPrice <= body.price ? null : body.highPrice;
@@ -311,23 +312,21 @@ async function putProduct( body: putProductBody ) {
     })
 }
 async function disableProduct( id: number ) {
-
     productRepository.disableProduct(id)
     return
 }
 async function enableProduct( id: number ) {
-
     productRepository.enableProduct(id)
     return
 }
 const productService = {
     getAllProductsData,
     getAllProductsDataWithAllData,
-    getAllProductsDataByCategoryId,
+    getAllProductsDataBySubCategoryId,
     getUniqueProductDataById,
     getUniqueProductDataByName,
     getAllProductsDataById,
-    verifyCategoryAndImageArrays,
+    verifySubCategoryAndImageArrays,
     verifyName,
     verifyNameBelongsId,
     createProduct,

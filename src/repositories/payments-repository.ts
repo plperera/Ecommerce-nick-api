@@ -1,9 +1,5 @@
 import { prisma } from "@/config";
-import { newCategoryBody } from "@/schemas/category/newCategorySCHEMA";
-import { putCategoryBody } from "@/schemas/category/putCategorySCHEMA";
 import { savePaymentBody } from "@/schemas/order/newOrderSCHEMA";
-import { categoriesArray, productBody } from "@/schemas/product/createProductSCHEMA";
-import { putProductBody } from "@/schemas/product/putProductSCHEMA";
 
 async function savePayment({body, userId}: {body: savePaymentBody, userId: number}){
     console.log(userId)

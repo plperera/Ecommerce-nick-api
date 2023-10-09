@@ -3,7 +3,7 @@ import httpStatus from "http-status";
 import { AuthenticatedRequest } from "@/middlewares/auth/authentication-middlerare";
 import { AuthenticatedAdminRequest } from "@/middlewares/auth/authenticationAdmin-middlerare";
 import productService from "@/services/product-service";
-import { getProductByCategorySCHEMA } from "@/schemas/product/getProductByCategorySCHEMA";
+import { getProductBySubCategorySCHEMA } from "@/schemas/product/getProductBySubCategorySCHEMA";
 import { getUniqueProductSCHEMA } from "@/schemas/product/getUniqueProductSCHEMA";
 import { createProductSCHEMA } from "@/schemas/product/createProductSCHEMA";
 import { putProductSCHEMA } from "@/schemas/product/putProductSCHEMA";
@@ -86,18 +86,18 @@ export async function getAllProductsById(req: Request, res: Response){
         return res.sendStatus(httpStatus.INTERNAL_SERVER_ERROR);
     }
 }
-export async function getAllProductsByCategoryId(req: AuthenticatedRequest, res: Response){
+export async function getAllProductsBySubCategoryId(req: AuthenticatedRequest, res: Response){
     try {        
 
-        const { categoryId } = req.params
+        const { subCategoryId } = req.params
         
-        const isValid = getProductByCategorySCHEMA.validate( {categoryId: Number(categoryId)}, {abortEarly: false})
+        const isValid = getProductBySubCategorySCHEMA.validate( {subCategoryId: Number(subCategoryId)}, {abortEarly: false})
 
         if(isValid.error){
             return res.sendStatus(httpStatus.BAD_REQUEST)
         }
 
-        const AllProducts = await productService.getAllProductsDataByCategoryId( Number(categoryId) )
+        const AllProducts = await productService.getAllProductsDataBySubCategoryId( Number(subCategoryId) )
 
         return res.send(AllProducts).status(httpStatus.OK)
         
@@ -183,7 +183,7 @@ export async function createProduct(req: AuthenticatedAdminRequest, res: Respons
             return res.sendStatus(httpStatus.BAD_REQUEST)
         }
         const { name } = req.body
-        await productService.verifyCategoryAndImageArrays(req.body)
+        await productService.verifySubCategoryAndImageArrays(req.body)
         await productService.verifyName(name)
 
         await productService.createProduct(req.body)
@@ -217,7 +217,7 @@ export async function putProduct(req: AuthenticatedAdminRequest, res: Response){
 
         const { name, id } = req.body
 
-        await productService.verifyCategoryAndImageArrays(req.body)
+        await productService.verifySubCategoryAndImageArrays(req.body)
         await productService.verifyNameBelongsId({name, id})
 
         await productService.putProduct(req.body)

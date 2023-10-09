@@ -1,7 +1,5 @@
 import { prisma } from "@/config";
-import { newCategoryBody } from "@/schemas/category/newCategorySCHEMA";
-import { putCategoryBody } from "@/schemas/category/putCategorySCHEMA";
-import { categoriesArray, productBody } from "@/schemas/product/createProductSCHEMA";
+import { productBody } from "@/schemas/product/createProductSCHEMA";
 import { putProductBody } from "@/schemas/product/putProductSCHEMA";
 
 export type productCartBodyResponse = {
@@ -24,8 +22,8 @@ export type productBodyResponse = {
     price: number;
     highPrice: number,
     stock: number;
-    productCategory: {
-        category: {
+    productSubCategory: {
+        subCategory: {
             id: number;
             name: string;
         };
@@ -49,8 +47,8 @@ export type productAdminBodyResponse = {
     highPrice: number,
     stock: number,
     isActive: boolean,
-    productCategory: {
-        category: {
+    productSubCategory: {
+        subCategory: {
             id: number;
             name: string;
         };
@@ -88,9 +86,9 @@ export type productUniqueBodyResponse = {
         topicDetail: string
     }[]
 };
-type CategoriesProductBody = { 
+type SubCategoriesProductBody = { 
     productId: number, 
-    categoryId: number
+    subCategoryId: number
 }[]
 
 type ImagesProductBody = { 
@@ -124,9 +122,9 @@ async function findAll(){
                     topicDetail: true,
                 }
             },
-            productCategory: {
+            productSubCategory: {
                 select: {
-                    category: {
+                    subCategory: {
                         select: {
                             id: true,
                             name: true
@@ -170,9 +168,9 @@ async function findAllActive(){
                     topicDetail: true,
                 }
             },
-            productCategory: {
+            productSubCategory: {
                 select: {
-                    category: {
+                    subCategory: {
                         select: {
                             id: true,
                             name: true
@@ -224,13 +222,13 @@ async function findAllActiveById(productIdArray: {productId: number}[]){
         }     
     });
 }
-async function findAllProductsActiveByCategoryId(categoryId: number){
+async function findAllProductsActiveByCategoryId(subCategoryId: number){
     return prisma.product.findMany({
         where: {
             isActive: true,
-            productCategory: {
+            productSubCategory: {
                 some: {
-                    categoryId: categoryId
+                    subCategoryId: subCategoryId
                 }
             }
         },
@@ -250,9 +248,9 @@ async function findAllProductsActiveByCategoryId(categoryId: number){
                     topicDetail: true,
                 }
             },
-            productCategory: {
+            productSubCategory: {
                 select: {
-                    category: {
+                    subCategory: {
                         select: {
                             id: true,
                             name: true
@@ -292,9 +290,9 @@ async function findProductById(productId: number){
                 topicDetail: true,
             }
         },
-        productCategory: {
+        productSubCategory: {
             select: {
-                category: {
+                subCategory: {
                     select: {
                         id: true,
                         name: true
@@ -334,9 +332,9 @@ async function findByName(productName: string){
                 topicDetail: true,
             }
         },
-        productCategory: {
+        productSubCategory: {
             select: {
-                category: {
+                subCategory: {
                     select: {
                         id: true,
                         name: true
@@ -373,8 +371,8 @@ async function createManyTecnicDetails(body: tecnicDetailsBody){
         data: body
     });
 }
-async function createManyCategoriesProduct(body: CategoriesProductBody){
-    return prisma.productCategory.createMany({
+async function createManyCategoriesProduct(body: SubCategoriesProductBody){
+    return prisma.productSubCategory.createMany({
         data: body
     });
 }
@@ -390,8 +388,8 @@ async function deleteManyTecnincDetails(productId: number){
         }
     });
 }
-async function deleteManyCategoriesProduct(productId: number){
-    return prisma.productCategory.deleteMany({
+async function deleteManySubCategoriesProduct(productId: number){
+    return prisma.productSubCategory.deleteMany({
         where: {
             productId: productId
         }
@@ -404,7 +402,7 @@ async function deleteManyImagesProduct(productId: number){
         }
     });
 }
-async function putProduct(body: Omit<putProductBody, "categories" | "images" | "tecnicDetails">){
+async function putProduct(body: Omit<putProductBody, "subCategories" | "images" | "tecnicDetails">){
     return prisma.product.update({
         where:{
             id: body.id
@@ -450,7 +448,7 @@ const productRepository = {
     createManyCategoriesProduct,
     createManyImagesProduct,
     createProduct,
-    deleteManyCategoriesProduct,
+    deleteManySubCategoriesProduct,
     deleteManyImagesProduct,
     deleteManyTecnincDetails,
     putProduct,

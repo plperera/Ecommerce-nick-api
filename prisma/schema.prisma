@@ -36,7 +36,6 @@ model sessionAdmin {
 
   userAdmin        userAdmin?     @relation(fields: [userAdminId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
-
 model enrollment {
   id          Int       @id @default(autoincrement())
   userId      Int       @unique
@@ -48,7 +47,6 @@ model enrollment {
 
   user        user?     @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
-
 model address {
   id              Int        @id @default(autoincrement())
   userId          Int 
@@ -68,7 +66,6 @@ model address {
   order           order[]
   user            user?     @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
-
 model user {
   id        Int         @id @default(autoincrement())
   name      String
@@ -84,7 +81,6 @@ model user {
   payment               payment[]
   productFavorite       productFavorite[]
 }
-
 model userAdmin {
   id        Int         @id @default(autoincrement())
   name      String
@@ -95,7 +91,6 @@ model userAdmin {
 
   sessionAdmin       sessionAdmin[]
 }
-
 model product {
   id                Int         @id @default(autoincrement())
   name              String      @unique
@@ -110,7 +105,7 @@ model product {
 
   homeProductBanner   homeProductBanner[]
   tecnicDetails       tecnicDetails[]
-  productCategory     productCategory[]
+  // productCategory     productCategory[]
   productSubCategory  productSubCategory[]
   productImage        productImage[]
   orderProduct        orderProduct[]
@@ -124,13 +119,13 @@ model productFavorite {
   product           product?     @relation(fields: [productId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   user              user?        @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
-model productCategory {
-  id                Int          @id @default(autoincrement())
-  productId         Int
-  categoryId        Int
-  product           product?     @relation(fields: [productId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  category          category?    @relation(fields: [categoryId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-}
+// model productCategory {
+//   id                Int          @id @default(autoincrement())
+//   productId         Int
+//   categoryId        Int
+//   product           product?     @relation(fields: [productId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+//   category          category?    @relation(fields: [categoryId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+// }
 model productSubCategory {
   id                Int             @id @default(autoincrement())
   productId         Int
@@ -155,7 +150,7 @@ model category {
   showInMenu            Boolean     @default(false)
 
   categorySubCategory   categorySubCategory[]
-  productCategory       productCategory[]
+  // productCategory       productCategory[]
   homeCategory          homeCategory[]
 }
 model subCategory {

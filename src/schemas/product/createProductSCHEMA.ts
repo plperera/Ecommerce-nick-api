@@ -1,6 +1,6 @@
 import joi from "joi"
 
-export type createProductBody = productBody & categoriesArray & imagesArray & tecnicDetailsArray
+export type createProductBody = productBody & subCategoriesArray & imagesArray & tecnicDetailsArray
 
 export type productBody = {
     name: string,
@@ -9,9 +9,9 @@ export type productBody = {
     highPrice: number,
     stock: number
 }
-export type categoriesArray = {
-    categories: {
-        categoryId: number,
+export type subCategoriesArray = {
+    subCategories: {
+        subCategoryId: number,
     }[],
 }
 export type imagesArray = {
@@ -41,9 +41,9 @@ const createProductSCHEMA = joi.object<createProductBody>({
         })
     ),
 
-    categories: joi.array().items(
+    subCategories: joi.array().items(
         joi.object({
-            categoryId: joi.number().integer().positive().required()
+            subCategoryId: joi.number().integer().positive().required()
         })
     ).min(1).required(),
 

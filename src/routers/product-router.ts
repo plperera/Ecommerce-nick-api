@@ -1,4 +1,4 @@
-import { activeProduct, createProduct, disableProduct, getAllProductWithAllData, getAllProducts, getAllProductsByCategoryId, getAllProductsById, getUniqueProductsById, getUniqueProductsByName, putProduct } from '@/controllers/product-controller'
+import { activeProduct, createProduct, disableProduct, getAllProductWithAllData, getAllProducts, getAllProductsById, getAllProductsBySubCategoryId, getUniqueProductsById, getUniqueProductsByName, putProduct } from '@/controllers/product-controller'
 import { authenticateAdminToken } from '@/middlewares/auth/authenticationAdmin-middlerare'
 import { Router } from 'express'
 
@@ -7,7 +7,7 @@ const productRouter = Router()
 productRouter
     .get("", getAllProducts)
     .get("/findmany/:productIdArray", getAllProductsById)
-    .get("/category/:categoryId", getAllProductsByCategoryId)
+    .get("/category/:categoryId", getAllProductsBySubCategoryId)
     .get("/unique/:productId", getUniqueProductsById)
     .get("/unique/name/:productName", getUniqueProductsByName)
 

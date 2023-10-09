@@ -16,9 +16,9 @@ function FormatProducts(productsArray: productBodyResponse){
         name: product.name,
         description: product.description,
         price: product.price,
-        categories: product.productCategory.map(e => ({
-          categoryId: e.category.id,
-          name: e.category.name
+        categories: product.productSubCategory.map(e => ({
+          categoryId: e.subCategory.id,
+          name: e.subCategory.name
         })),
         images: product.productImage.map(e => ({
           mainImage: e.mainImage,

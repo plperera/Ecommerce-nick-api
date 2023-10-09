@@ -1,7 +1,7 @@
 import joi from "joi"
-import { categoriesArray, imagesArray, tecnicDetailsArray } from "./createProductSCHEMA"
+import { subCategoriesArray, imagesArray, tecnicDetailsArray } from "./createProductSCHEMA"
 
-export type putProductBody = productBody & categoriesArray & imagesArray & tecnicDetailsArray
+export type putProductBody = productBody & subCategoriesArray & imagesArray & tecnicDetailsArray
 
 export type productBody = {
     id: number,
@@ -27,9 +27,9 @@ const putProductSCHEMA = joi.object<putProductBody>({
         })
     ),
 
-    categories: joi.array().items(
+    subCategories: joi.array().items(
         joi.object({
-            categoryId: joi.number().integer().positive().required()
+            subCategoryId: joi.number().integer().positive().required()
         })
     ).min(1).required(),
     

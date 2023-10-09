@@ -1,8 +1,4 @@
 import { prisma } from "@/config";
-import { newCategoryBody } from "@/schemas/category/newCategorySCHEMA";
-import { putCategoryBody } from "@/schemas/category/putCategorySCHEMA";
-import { categoriesArray, productBody } from "@/schemas/product/createProductSCHEMA";
-import { putProductBody } from "@/schemas/product/putProductSCHEMA";
 
 export type productCartBodyResponse = {
     id: number;
@@ -103,9 +99,9 @@ async function findAllFavoritesProductsData(userId: number){
                             topicDetail: true,
                         }
                     },
-                    productCategory: {
+                    productSubCategory: {
                         select: {
-                            category: {
+                            subCategory: {
                                 select: {
                                     id: true,
                                     name: true
