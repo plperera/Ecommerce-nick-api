@@ -26,6 +26,43 @@ async function getAllCategoriesData(){
     })
     return formatedResult
 }
+async function getAllCategoriesAdminData(){
+    const result = await categoryRepository.findAllAdminData()
+
+    const formatedResult = result.map(e => {
+        return {
+            categoryId: e.id,
+            categoryName: e.name,
+            subCategories: e.categorySubCategory.map(csub => {
+                return {
+                    subCategoryId: csub.subCategory.id,
+                    subCategoryName: csub.subCategory.name,
+                    isActive: csub.subCategory.isActive,
+                    products: csub.subCategory.productSubCategory.map(sp => {
+                        return {
+                            productId: sp.product.id,
+                            productName: sp.product.name,
+                            description: sp.product.description,
+                            price: sp.product.price,
+                            highPrice: sp.product.highPrice,
+                            salesAmount: sp.product.salesAmount,
+                            stock: sp.product.stock,
+                            isActive: sp.product.isActive,
+                            productImages: sp.product.productImage.map(pi => {
+                                return {
+                                    imageId: pi.image.id,
+                                    imageName: pi.image.imageName,
+                                    imageUrl: pi.image.imageUrl,
+                                }
+                            }),
+                        }
+                    }),
+                }
+            })
+        }
+    })
+    return formatedResult
+}
 async function verifyName(name: string){
     const result = await categoryRepository.findByName(name)
 
@@ -35,32 +72,32 @@ async function verifyName(name: string){
 
     return 
 }
-async function verifyNameBelongsId ({ name, id }: Omit<putShippingBody, "price">){
-    const result = await categoryRepository.findByName(name)
+async function verifyNameBelongsId ({ categoryName, categoryId }: putCategoryBody){
+    const result = await categoryRepository.findByName(categoryName)
 
-    if ( result && result?.id !== id){
+    if ( result && result?.id !== categoryId){
         throw conflictError("Nome de categoria já atrelada a outro id")
     }
     return 
 }
-async function verifyValidId(id: number){
-    const result = await categoryRepository.findById(id)
+async function verifyValidId(categoryId: number){
+    const result = await categoryRepository.findById(categoryId)
 
     if ( !result ){
         throw notFoundError("Não existe categoria com o ID passado")
     }
     return 
 }
-async function createCategory({ name }: newCategoryBody){
-    await categoryRepository.createCategory({ name })
+async function createCategory({ categoryName }: newCategoryBody){
+    await categoryRepository.createCategory({ categoryName })
     return 
 }
-async function putCategory({ name, id }: putCategoryBody){
-    await categoryRepository.putCategory({ name, id })
+async function putCategory({ categoryName, categoryId }: putCategoryBody){
+    await categoryRepository.putCategory({ categoryName, categoryId })
     return 
 }
-async function disableCategory(id: number){
-    await categoryRepository.disableCategory( id )
+async function disableCategory(categoryId: number){
+    await categoryRepository.disableCategory( categoryId )
     return 
 }
 async function verifyLink({ subCategoryId, categoryId }: { subCategoryId: number, categoryId: number }){
@@ -86,7 +123,8 @@ const categoryService = {
     disableCategory,
     verifyLink,
     handleLinkSubCategory,
-    handleUnLinkSubCategory
+    handleUnLinkSubCategory,
+    getAllCategoriesAdminData
 }
 
 export default categoryService

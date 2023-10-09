@@ -1,12 +1,12 @@
 import joi from "joi"
 
 export type newCategoryBody = {
-    name: string   
+    categoryName: string   
 }
 
 const newCategorySCHEMA = joi.object<newCategoryBody>({
 
-    name: joi.string().required().min(3) 
+    categoryName: joi.string().required().min(3) 
 
 })
 

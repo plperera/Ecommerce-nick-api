@@ -30,6 +30,27 @@ export async function getAllCategories(req: AuthenticatedRequest, res: Response)
         return res.sendStatus(httpStatus.INTERNAL_SERVER_ERROR);
     }
 }
+export async function getAllCategoriesData(req: AuthenticatedRequest, res: Response){
+    try {        
+
+        const allCategoriesAdminData = await categoryService.getAllCategoriesAdminData()
+
+        return res.send(allCategoriesAdminData).status(httpStatus.OK)
+        
+
+    } catch (error) {
+        if(error.name === "ConflictError") {
+            return res.sendStatus(httpStatus.CONFLICT);
+        }
+        if (error.name === "BadRequestError") {
+            return res.status(httpStatus.BAD_REQUEST).send(error);
+        }
+        if (error.name === "ForbiddenError") {
+            return res.status(httpStatus.FORBIDDEN).send(error);
+        }
+        return res.sendStatus(httpStatus.INTERNAL_SERVER_ERROR);
+    }
+}
 export async function createCategory(req: AuthenticatedAdminRequest, res: Response){
     try {        
 
@@ -39,11 +60,11 @@ export async function createCategory(req: AuthenticatedAdminRequest, res: Respon
             return res.sendStatus(httpStatus.BAD_REQUEST)
         }
 
-        const { name } = req.body
+        const { categoryName } = req.body
 
-        await categoryService.verifyName(name)
+        await categoryService.verifyName(categoryName)
 
-        await categoryService.createCategory({ name })
+        await categoryService.createCategory({ categoryName })
 
         return res.sendStatus(httpStatus.CREATED)
         
@@ -70,12 +91,12 @@ export async function putCategory(req: AuthenticatedAdminRequest, res: Response)
             return res.sendStatus(httpStatus.BAD_REQUEST)
         }
 
-        const { name, id } = req.body
+        const { categoryName, categoryId } = req.body
 
-        await categoryService.verifyValidId(id)
-        await categoryService.verifyNameBelongsId({id, name})
+        await categoryService.verifyValidId(categoryId)
+        await categoryService.verifyNameBelongsId({categoryName, categoryId})
 
-        await categoryService.putCategory({ name, id })
+        await categoryService.putCategory({ categoryName, categoryId })
 
         return res.sendStatus(httpStatus.OK)
         
@@ -102,11 +123,11 @@ export async function disableCategory(req: AuthenticatedAdminRequest, res: Respo
             return res.sendStatus(httpStatus.BAD_REQUEST)
         }
 
-        const { id } = req.body
+        const { categoryId } = req.body
 
-        await categoryService.verifyValidId(id)
+        await categoryService.verifyValidId(categoryId)
 
-        await categoryService.disableCategory(id)
+        await categoryService.disableCategory(categoryId)
 
         return res.sendStatus(httpStatus.OK)
         
