@@ -1,6 +1,4 @@
-import { createCategory, disableCategory, getAllCategories, putCategory } from '@/controllers/category-controller'
 import { createSubCategory, getAllSubCategoriesData, handleProductLink, handleStatusSubCategory, putSubCategory } from '@/controllers/sub-category-controller'
-import { authenticateToken } from '@/middlewares/auth/authentication-middlerare'
 import { authenticateAdminToken } from '@/middlewares/auth/authenticationAdmin-middlerare'
 import { Router } from 'express'
 

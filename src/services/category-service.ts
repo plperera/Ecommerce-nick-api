@@ -14,16 +14,14 @@ async function getAllCategoriesData(){
         return {
             categoryId: e.id,
             categoryName: e.name,
-            subCategories: [
-                e.categorySubCategory.map(s => {
-                    return {
-                        subCategoryId: s.subCategory.id,
-                        subCategoryName: s.subCategory.name,
-                        subCategoryShowInMenu: s.subCategory.showInMenu,
-                        subCategoryIsActived: s.subCategory.isActive
-                    }
-                }).filter(sf => sf?.subCategoryIsActived)
-            ]
+            subCategories: e.categorySubCategory.map(s => {
+                return {
+                    subCategoryId: s.subCategory.id,
+                    subCategoryName: s.subCategory.name,
+                    subCategoryShowInMenu: s.subCategory.showInMenu,
+                    subCategoryIsActived: s.subCategory.isActive
+                }
+            }).filter(sf => sf?.subCategoryIsActived)
         }
     })
     return formatedResult
@@ -77,7 +75,6 @@ async function handleUnLinkSubCategory({linkId}: {linkId: number}){
     const result = await categoryRepository.handleUnLinkSubCategory(linkId)
     return result
 }
-
 
 const categoryService = {
     getAllCategoriesData,

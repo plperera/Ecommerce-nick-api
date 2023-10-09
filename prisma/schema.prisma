@@ -159,7 +159,7 @@ model subCategory {
   createdAt             DateTime    @default(now())
   updatedAt             DateTime    @updatedAt
   isActive              Boolean     @default(true)
-  showInMenu            Boolean     @default(false)
+  showInMenu            Boolean     @default(true)
 
   categorySubCategory   categorySubCategory[]
   productSubCategory    productSubCategory[]
