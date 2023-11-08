@@ -5,7 +5,12 @@ async function findAll(){
         select: {
             id: true,
             imageUrl: true,
-            imageName: true
+            imageName: true,
+            productImage: {
+                select: {
+                    productId: true,
+                }
+            }
         }
     });
 }
@@ -13,6 +18,14 @@ async function findById( imageId: number ){
     return prisma.image.findUnique({
         where: {
             id: imageId
+        }
+    });
+}
+async function findByLink({ productId, imageId }: {productId: number, imageId: number}){
+    return prisma.productImage.findFirst({
+        where: {
+            productId: productId,
+            imageId: imageId
         }
     });
 }
@@ -24,19 +37,35 @@ async function createImageRef( {imageURL, name}: {imageURL: string, name: string
        }
     });
 }
-async function deleteImageRef( imageURL: number ){
+async function deleteImageRef(imageURL: number){
     return prisma.image.delete({
        where: {
         id: imageURL
        }
     });
 }
-async function deleteProductImageRef( imageURL: number ){
+async function deleteProductImageRef(imageURL: number){
     return prisma.productImage.deleteMany({
        where: {
         imageId: imageURL
        }
     });
+}
+async function unLinkProductImage(linkId: number){
+    return prisma.productImage.delete({
+        where: {
+            id: linkId
+        }
+    })
+}
+
+async function linkProductImage({ productId, imageId }: {productId: number, imageId: number}){
+    return prisma.productImage.create({
+        data: {
+            productId: productId,
+            imageId: imageId
+        }
+    })
 }
 
 const imageRepository = {
@@ -44,7 +73,10 @@ const imageRepository = {
     createImageRef,
     findById,
     deleteImageRef,
-    deleteProductImageRef
+    deleteProductImageRef,
+    findByLink,
+    unLinkProductImage,
+    linkProductImage
 }
 
 export default imageRepository

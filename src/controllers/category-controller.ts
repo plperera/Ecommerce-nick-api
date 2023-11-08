@@ -164,6 +164,7 @@ export async function handleSubCategoryLink(req: AuthenticatedAdminRequest, res:
         if (hasLink) {
             await categoryService.handleUnLinkSubCategory({ linkId: hasLink?.id })
         } else {
+            await categoryService.clearSubCategoryLink(subCategoryId)
             await categoryService.handleLinkSubCategory({ subCategoryId, categoryId })
         }
 

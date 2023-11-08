@@ -1,4 +1,4 @@
-import { activeProduct, createProduct, disableProduct, getAllProductWithAllData, getAllProducts, getAllProductsById, getAllProductsBySubCategoryId, getUniqueProductsById, getUniqueProductsByName, putProduct } from '@/controllers/product-controller'
+import { activeProduct, createProduct, disableProduct, getAllProductWithAllData, getAllProducts, getAllProductsById, getAllProductsBySubCategoryId, getUniqueProductsById, getUniqueProductsByName, handleProductImageLink, putProduct } from '@/controllers/product-controller'
 import { authenticateAdminToken } from '@/middlewares/auth/authenticationAdmin-middlerare'
 import { Router } from 'express'
 
@@ -15,6 +15,7 @@ productRouter
     .get("/admin", getAllProductWithAllData)
     .post("/admin", createProduct)
     .put("/admin", putProduct)
+    .put("/admin/imagelink", handleProductImageLink)
     .put("/admin/disable", disableProduct)
     .put("/admin/enable", activeProduct)
 

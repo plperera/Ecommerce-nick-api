@@ -139,6 +139,13 @@ async function handleUnLinkSubCategory(linkId: number){
         }
     });
 }
+async function clearSubCategoryLink(subCategoryId: number){
+    return prisma.categorySubCategory.deleteMany({
+        where: {
+            subCategoryId: subCategoryId
+        }
+    });
+}
 
 const categoryRepository = {
     findAllActive,
@@ -150,7 +157,8 @@ const categoryRepository = {
     verifyLink,
     handleLinkSubCategory,
     handleUnLinkSubCategory,
-    findAllAdminData
+    findAllAdminData,
+    clearSubCategoryLink
 }
 
 export default categoryRepository

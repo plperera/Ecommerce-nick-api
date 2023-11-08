@@ -25,6 +25,16 @@ async function findAllSubCategoriesData(){
                     }
                 }
             },
+            productSubCategory: {
+                select: {
+                    product: {
+                        select: {
+                          id: true,
+                          name: true,
+                        },
+                    }
+                }
+            },
         }
     });
 }

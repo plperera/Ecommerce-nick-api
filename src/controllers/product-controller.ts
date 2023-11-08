@@ -9,6 +9,8 @@ import { createProductSCHEMA } from "@/schemas/product/createProductSCHEMA";
 import { putProductSCHEMA } from "@/schemas/product/putProductSCHEMA";
 import { disableProductSCHEMA } from "@/schemas/product/deleteProductSCHEMA";
 import { getByNameUniqueProductSCHEMA } from "@/schemas/product/getByNameUniqueProductSCHEMA";
+import { linkProductImageSCHEMA } from "@/schemas/product/linkProductImageSCHEMA";
+import imageService from "@/services/image-service";
 
 export async function getAllProducts(req: AuthenticatedRequest, res: Response){
     try {        
@@ -296,6 +298,47 @@ export async function activeProduct(req: AuthenticatedAdminRequest, res: Respons
         
 
     } catch (error) {
+        if(error.name === "ConflictError") {
+            return res.sendStatus(httpStatus.CONFLICT);
+        }
+        if (error.name === "BadRequestError") {
+            return res.status(httpStatus.BAD_REQUEST).send(error);
+        }
+        if (error.name === "ForbiddenError") {
+            return res.status(httpStatus.FORBIDDEN).send(error);
+        }
+        return res.sendStatus(httpStatus.INTERNAL_SERVER_ERROR);
+    }
+}
+export async function handleProductImageLink(req: AuthenticatedAdminRequest, res: Response){
+    try {        
+
+        const isValid = linkProductImageSCHEMA.validate(req.body, {abortEarly: false})
+
+        if(isValid.error){
+            return res.sendStatus(httpStatus.BAD_REQUEST)
+        }   
+
+        const { productId, imageId } = req.body
+
+        await productService.verifyProductId(productId)
+        await imageService.verifyImageId(imageId)
+
+        const hasLink = await imageService.verifyLink({ productId, imageId })
+
+        if (hasLink) {
+            await imageService.handleUnLinkSubCategory(hasLink?.id)
+        } else {
+            await imageService.handleLinkSubCategory({ productId, imageId })
+        }
+
+        return res.sendStatus(httpStatus.OK)
+        
+
+    } catch (error) {
+        if(error.name === "AcceptedError") {
+            return res.sendStatus(httpStatus.ACCEPTED);
+        }
         if(error.name === "ConflictError") {
             return res.sendStatus(httpStatus.CONFLICT);
         }

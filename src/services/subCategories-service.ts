@@ -15,6 +15,12 @@ async function getAllSubCategoriesData(){
             subCategoryShowInMenu: subc.showInMenu,
             subCategoryCreatedAt: subc.createdAt,
             subCategoryUpdatedAt: subc.updatedAt,
+            products: subc.productSubCategory.map(prodSubc => {
+                return {
+                    productId: prodSubc.product.id,
+                    productName: prodSubc.product.name
+                }
+            }),
             mainCategory: {
                 categoryId: subc?.categorySubCategory[0]?.category?.id,
                 categoryName: subc?.categorySubCategory[0]?.category?.name,

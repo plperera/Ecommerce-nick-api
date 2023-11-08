@@ -30,6 +30,30 @@ async function deleteImageRef( imageId: number ){
     return 
 }
 
+async function verifyImageId( imageId: number ){
+
+    const hasImage = await imageRepository.findById(imageId)
+
+    if(!hasImage){
+        throw notFoundError("Imagem não encontrada")
+    }
+
+    return hasImage
+}
+async function verifyLink({ productId, imageId }: {productId: number, imageId: number}) {
+    const hasLink = await imageRepository.findByLink({ productId, imageId })
+    return hasLink
+}
+
+async function handleUnLinkSubCategory(linkId: number) {
+    await imageRepository.unLinkProductImage(linkId)
+    return 
+}
+async function handleLinkSubCategory({ productId, imageId }: {productId: number, imageId: number}) {
+    await imageRepository.linkProductImage({productId, imageId})
+    return 
+}
+
 async function deleteProductImageRef( imageId: number ){
 
     await imageRepository.deleteProductImageRef(imageId)
@@ -40,7 +64,11 @@ async function deleteProductImageRef( imageId: number ){
 const imageService = {
     getAllImagesData,
     createImageRef,
-    deleteImageRef
+    deleteImageRef,
+    verifyImageId,
+    verifyLink,
+    handleUnLinkSubCategory,
+    handleLinkSubCategory
 }
 
 export default imageService

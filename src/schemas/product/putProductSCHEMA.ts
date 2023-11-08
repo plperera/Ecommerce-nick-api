@@ -15,7 +15,7 @@ export type productBody = {
 const putProductSCHEMA = joi.object<putProductBody>({
     id: joi.number().integer().positive().required(),
     name: joi.string().min(3).max(100).required(),
-    description: joi.string().min(10).max(1000).required(),
+    description: joi.string().min(0).max(1000).required(),
     price: joi.number().integer().min(0).required(),
     highPrice: joi.number().integer().min(0).optional(),
     stock: joi.number().integer().min(0).required(),

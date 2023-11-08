@@ -112,6 +112,10 @@ async function handleUnLinkSubCategory({linkId}: {linkId: number}){
     const result = await categoryRepository.handleUnLinkSubCategory(linkId)
     return result
 }
+async function clearSubCategoryLink(subCategoryId: number){
+    const result = await categoryRepository.clearSubCategoryLink(subCategoryId)
+    return result
+}
 
 const categoryService = {
     getAllCategoriesData,
@@ -124,7 +128,8 @@ const categoryService = {
     verifyLink,
     handleLinkSubCategory,
     handleUnLinkSubCategory,
-    getAllCategoriesAdminData
+    getAllCategoriesAdminData,
+    clearSubCategoryLink
 }
 
 export default categoryService

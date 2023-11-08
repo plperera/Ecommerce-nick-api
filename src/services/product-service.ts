@@ -232,7 +232,7 @@ async function verifyNameBelongsId ({ name, id }: { name: string, id: number}){
     const result = await productRepository.findByName(name)
 
     if ( result && result?.id !== id){
-        throw conflictError("Nome de método de entrega já atrelado a outro id")
+        throw conflictError("Nome do produto já atrelado a outro id")
     }
 
     return 
