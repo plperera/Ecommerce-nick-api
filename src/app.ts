@@ -20,10 +20,14 @@ import { homePageRouter } from "./routers/homepage-router";
 import { favoriteRouter } from "./routers/favorite-router";
 import { subCategoryRouter } from "./routers/sub-category-router";
 
-
 const app = express();
 app
-  .use(cors())
+  .use(cors({
+    origin: 'http://localhost:3000',
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    credentials: true,
+    optionsSuccessStatus: 204
+  }))
   .use(express.json())
   .get("/health", (_req, res) => res.send("OK!"))
   .use("/auth", authRouter)
