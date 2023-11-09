@@ -21,12 +21,26 @@ import { favoriteRouter } from "./routers/favorite-router";
 import { subCategoryRouter } from "./routers/sub-category-router";
 
 const app = express();
+
+const allowedOrigins = [
+  "http://localhost",
+  "http://127.0.0.1",
+  "http://seu-dominio.com",
+  "https://seu-dominio.com"
+];
+
 app
   .use(cors({
-    origin: 'http://localhost:3000',
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-    credentials: true,
-    optionsSuccessStatus: 204
+    origin: function (origin, callback) {
+      if (!origin) return callback(null, true);
+
+      if (allowedOrigins.indexOf(origin) === -1) {
+        var msg = 'A política CORS para este site não permite acesso a partir da origem especificada.';
+        return callback(new Error(msg), false);
+      }
+      return callback(null, true);
+    },
+    credentials: true
   }))
   .use(express.json())
   .get("/health", (_req, res) => res.send("OK!"))

@@ -4,6 +4,7 @@ src/old
 .env*
 !.env.example
 yarn.lock
+ngix.conf
 .vscode
 coverage
 imageuploads-7b8bc-firebase-adminsdk-mee3x-60dd1bbedd.json
