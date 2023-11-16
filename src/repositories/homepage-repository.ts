@@ -28,11 +28,20 @@ async function findAllCategoriesHomeData(){
                     imageUrl: true,
                 }
             },
-            category: {
+            subCategory: {
                 select: {
                     name: true,
                 }
             }      
+        }
+    });
+}
+async function findAllCategoryCardData(){
+    return prisma.homeCategory.findMany({
+        select: {
+            id: true,   
+            image: true,
+            subCategory: true
         }
     });
 }
@@ -105,7 +114,7 @@ async function createHomeCategory(body: newHomeCategoryBody){
     return prisma.homeCategory.create({
         data:{
             imageId: body.imageId,
-            categoryId: body.categoryId
+            subCategoryId: body.subCategoryId
         }
     });
 }
@@ -137,7 +146,7 @@ async function updateHomeCategory(body: putHomeCategoryBody){
         },
         data: {
             imageId: body.imageId,
-            categoryId: body.categoryId,
+            subCategoryId: body.subCategoryId,
         }
     });
 }
@@ -169,6 +178,8 @@ const homePageRepository = {
     findAllProductBannerHomeData,
     createProductBanner,
     deleteProductBannerById,
-    updateProductBanner
+    updateProductBanner,
+    findAllCategoryCardData
+    
 }
 export default homePageRepository

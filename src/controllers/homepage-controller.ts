@@ -133,12 +133,12 @@ export async function createHomeCategory(req: AuthenticatedAdminRequest, res: Re
             return res.sendStatus(httpStatus.BAD_REQUEST)
         }
         
-        const { imageId, categoryId } = req.body
+        const { imageId, subCategoryId } = req.body
  
         await homePageService.verifyImage(imageId)
-        await homePageService.verifyCategory(categoryId)
+        await homePageService.verifySubCategory(subCategoryId)
 
-        await homePageService.createHomeCategory({ imageId, categoryId })
+        await homePageService.createHomeCategory({ imageId, subCategoryId })
 
         return res.sendStatus(httpStatus.CREATED)
         
@@ -184,13 +184,13 @@ export async function updateHomeCategory(req: AuthenticatedAdminRequest, res: Re
             return res.sendStatus(httpStatus.BAD_REQUEST)
         }
         
-        const { homeCategoryId, imageId, categoryId, subTitle } = req.body
+        const { homeCategoryId, imageId, subCategoryId, subTitle } = req.body
 
         await homePageService.verifyHomeCategoryId(homeCategoryId)
         await homePageService.verifyImage(imageId)
-        await homePageService.verifyCategory(categoryId)
+        await homePageService.verifySubCategory(subCategoryId)
 
-        await homePageService.updateHomeCategory({ homeCategoryId, imageId, categoryId })
+        await homePageService.updateHomeCategory({ homeCategoryId, imageId, subCategoryId })
 
         return res.sendStatus(httpStatus.OK)
         
@@ -277,6 +277,18 @@ export async function updateProductBanner(req: AuthenticatedAdminRequest, res: R
         if (error.name === "BadRequestError") {
             return res.status(httpStatus.BAD_REQUEST).send(error);
         }
+        return res.sendStatus(httpStatus.INTERNAL_SERVER_ERROR);
+    }
+}
+export async function getAllCategoryCardData(req: Request, res: Response){
+    try {        
+
+        const AllCategoriesHome = await homePageService.getAllCardCategoryData()
+
+        return res.send(AllCategoriesHome.reverse()).status(httpStatus.OK)
+        
+
+    } catch (error) {
         return res.sendStatus(httpStatus.INTERNAL_SERVER_ERROR);
     }
 }

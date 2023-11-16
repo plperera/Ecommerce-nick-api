@@ -238,7 +238,6 @@ async function verifyNameBelongsId ({ name, id }: { name: string, id: number}){
     return 
 }
 async function createProduct( body: createProductBody ) {
-
     const productData = await productRepository.createProduct({ 
         name: body.name, 
         description: body.description, 
@@ -248,12 +247,6 @@ async function createProduct( body: createProductBody ) {
     })
 
     const image = justOneTrue(body.images)
-
-    const newTecnincDetails = body.tecnicDetails.map(e => ({
-        productId: productData.id,
-        topic: e.topic,
-        topicDetail: e.topicDetail
-    }));
 
     const newSubCategoryArray = body.subCategories.map(e => ({
         subCategoryId: e.subCategoryId,
@@ -266,7 +259,15 @@ async function createProduct( body: createProductBody ) {
         productId: productData.id
     }));
 
-    await productRepository.createManyTecnicDetails(newTecnincDetails)
+    if (body.tecnicDetails !== undefined){
+        const newTecnincDetails = body.tecnicDetails.map(e => ({
+            productId: productData.id,
+            topic: e.topic,
+            topicDetail: e.topicDetail
+        }));
+        await productRepository.createManyTecnicDetails(newTecnincDetails)
+    }
+
     await productRepository.createManyCategoriesProduct(newSubCategoryArray)
     await productRepository.createManyImagesProduct(newImagesArray)
 

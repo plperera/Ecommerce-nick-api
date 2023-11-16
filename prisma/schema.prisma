@@ -151,7 +151,6 @@ model category {
 
   categorySubCategory   categorySubCategory[]
   // productCategory       productCategory[]
-  homeCategory          homeCategory[]
 }
 model subCategory {
   id                    Int         @id @default(autoincrement())
@@ -163,6 +162,7 @@ model subCategory {
 
   categorySubCategory   categorySubCategory[]
   productSubCategory    productSubCategory[]
+  homeCategory          homeCategory[]
 }
 model categorySubCategory {
   id                 Int             @id @default(autoincrement())
@@ -183,13 +183,13 @@ model banner {
 }
 model homeCategory {
   id                Int         @id @default(autoincrement())
-  categoryId        Int           
+  subCategoryId        Int           
   imageId           Int
   createdAt         DateTime    @default(now())
   updatedAt         DateTime    @updatedAt
 
   image             image?      @relation(fields: [imageId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  category          category?   @relation(fields: [categoryId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  subCategory          subCategory?   @relation(fields: [subCategoryId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 model homeProductBanner {
   id                Int         @id @default(autoincrement())       

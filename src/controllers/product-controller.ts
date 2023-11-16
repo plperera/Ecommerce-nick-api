@@ -177,7 +177,6 @@ export async function getUniqueProductsById(req: AuthenticatedRequest, res: Resp
 }
 export async function createProduct(req: AuthenticatedAdminRequest, res: Response){
     try {        
-
         const isValid = createProductSCHEMA.validate(req.body, {abortEarly: false})
 
         if(isValid.error){
@@ -187,7 +186,7 @@ export async function createProduct(req: AuthenticatedAdminRequest, res: Respons
         const { name } = req.body
         await productService.verifySubCategoryAndImageArrays(req.body)
         await productService.verifyName(name)
-
+        
         await productService.createProduct(req.body)
 
         return res.sendStatus(httpStatus.CREATED)

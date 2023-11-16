@@ -6,6 +6,7 @@ import categoryRepository from "@/repositories/category-repository";
 import homePageRepository from "@/repositories/homepage-repository";
 import imageRepository from "@/repositories/image-repository";
 import productRepository from "@/repositories/product-repository";
+import subCategoryRepository from "@/repositories/subCategory-repository";
 import { newHomeBannerBody } from "@/schemas/homePage/newHomeBannerSCHEMA";
 import { newHomeCategoryBody } from "@/schemas/homePage/newHomeCategorySCHEMA";
 import { newProductBannerBody } from "@/schemas/homePage/newProductBannerSCHEMA";
@@ -31,7 +32,22 @@ async function getAllCategoriesHomeData(){
         return {
             categoryCardId: e.id, 
             imageUrl: e.image.imageUrl, 
-            categoryName: e.category.name
+            subCategoryName: e.subCategory.name
+        }
+    })
+    
+    return formatedResult
+}
+async function getAllCardCategoryData(){
+    const result = await homePageRepository.findAllCategoryCardData()
+    
+    const formatedResult = result.map(e => {
+        return {
+            categoryCardId: e.id, 
+            imageUrl: e.image.imageUrl, 
+            subCategoryName: e.subCategory.name,
+            subCategoryId: e.subCategory.id,
+            imageId: e.image.id
         }
     })
     
@@ -93,12 +109,12 @@ async function updateBanner(body: putHomeBannerBody){
     await homePageRepository.updateBanner(body)
     return 
 }
-async function verifyCategory(categoryId: number){
+async function verifySubCategory(subCategoryId: number){
 
-    const result = await categoryRepository.findById(categoryId)
+    const result = await subCategoryRepository.findSubCategoryById(subCategoryId)
 
     if(!result){
-        throw badRequestError("Categoria não encontrada")
+        throw badRequestError("SubCategoria não encontrada")
     }
    
     return 
@@ -159,7 +175,7 @@ const homePageService = {
     verifyBannerId,
     deleteBanner,
     updateBanner,
-    verifyCategory,
+    verifySubCategory,
     createHomeCategory,
     createProductBanner,
     verifyHomeCategoryId,
@@ -167,6 +183,7 @@ const homePageService = {
     deleteHomeCategory,
     updateHomeCategory,
     deleteProductBanner,
-    updateProductBanner
+    updateProductBanner,
+    getAllCardCategoryData
 }
 export default homePageService
